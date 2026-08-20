@@ -1,0 +1,9 @@
+# Exemples de requêtes déterministes sur une fiche Markdown ou une vue TOML.
+# Elles donnent à l'agent une porte d'accès directe aux états sans résumer tout
+# le document.
+
+^review_status:\s*(?<review_status>[A-Z_]+)\s*$
+^quality_status:\s*(?<quality_status>[A-Z_]+)\s*$
+^\s*status:\s*["']?(?<status>[A-Za-z_-]+)["']?\s*$
+^\s*kb_status:\s*$
+^\s+marked_files:\s*(?<marked_files>[0-9]+)\s*$

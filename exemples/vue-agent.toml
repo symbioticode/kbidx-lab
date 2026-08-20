@@ -1,0 +1,17 @@
+# Vue machine : le statut est adressable sans parcourir le texte Markdown.
+
+[[knowledge_state]]
+id = "youtube:bU5ZDdRnN2M"
+source_file = "21_YOUTUBE_KB/entries/bU5ZDdRnN2M.md"
+kind = "youtube-entry"
+status = "A_REVOIR"
+quality = "PRELIMINAIRE"
+owner = "YOUTUBE-KB"
+
+[[knowledge_state]]
+id = "project:02_MYDASHBOARD"
+source_file = "02_MYDASHBOARD/dashboard.yaml"
+kind = "project"
+status = "active"
+marked_files = 0
+known_statuses = []

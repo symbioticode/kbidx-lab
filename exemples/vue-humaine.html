@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>Exemple de vue KBM</title>
+  <style>
+    body { font: 16px system-ui, sans-serif; max-width: 900px; margin: 2rem auto; color: #17202a; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; }
+    article { border: 1px solid #ccd3da; border-radius: .6rem; padding: 1rem; }
+    .state { display: inline-block; padding: .25rem .5rem; border-radius: .4rem; background: #fff1c7; }
+    dt { color: #52606d; margin-top: .6rem; } dd { margin: .1rem 0; font-family: ui-monospace, monospace; }
+  </style>
+</head>
+<body>
+  <h1>États de connaissance — vue humaine</h1>
+  <p>La même information que la vue agent, rendue lisible sans parcourir tout le corpus.</p>
+  <section class="grid">
+    <article>
+      <h2>Fiche YouTube</h2>
+      <p class="state">À revoir</p>
+      <dl>
+        <dt>ID</dt><dd>bU5ZDdRnN2M</dd>
+        <dt>Qualité</dt><dd>Préliminaire</dd>
+        <dt>Projet</dt><dd>YOUTUBE-KB</dd>
+      </dl>
+    </article>
+    <article>
+      <h2>Projet MyDashboard</h2>
+      <p class="state" style="background:#d9f7e3">Actif</p>
+      <dl>
+        <dt>Fichiers marqués</dt><dd>0</dd>
+        <dt>Statuts connus</dt><dd>aucun dans cet instantané</dd>
+        <dt>Source</dt><dd>dashboard.yaml</dd>
+      </dl>
+    </article>
+  </section>
+</body>
+</html>

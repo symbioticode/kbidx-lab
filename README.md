@@ -36,8 +36,8 @@ La question n'est pas seulement : « le projet est-il tagué ? » Elle est :
 Dans le workflow réel, le statut d'un fichier ou d'un projet doit être exploitable
 par des outils et visible dans un tableau de bord :
 
-- dans [mydashboard](https://github.com/dravitch/mydashboard), pour suivre le
-  statut des projets ;
+- dans un tableau de bord privé de type **MyDashboard**, pour suivre le statut
+  des projets ;
 - dans **YOUTUBE-KB**, pour savoir où en sont les fichiers traités par des IA ;
 - dans le **change management**, où chaque CT doit déclarer un `KB-STATUS` afin
   de distinguer ce qui est en suspens, en cours d'exécution ou échoué.
@@ -59,6 +59,8 @@ un corpus KBM composé de TOML TI-360 et de Markdown.
   les désaccords et leur résolution — ou leur caractère indéterminable ;
 - `corpus/all/` : corpus TOML canonique utilisé par l'expérience ;
 - `docs/` : contexte, protocole et verdict de l'exploration.
+- `exemples/` : un même type d'information présenté pour l'œil humain et pour
+  une consommation machine, à partir de cas YOUTUBE-KB et MyDashboard.
 
 Le résultat de l'exploration est volontairement mesuré : Universal Ctags et
 l'indexation associée apportent une valeur marginale mais réelle sur certains
@@ -74,6 +76,10 @@ est-ce relié ? » et « dans quel état se trouve ce fichier ou ce projet ? ».
 
 La valeur pour une IA doit être jugée sur ces gains d'accès et de vérifiabilité,
 pas sur le simple nombre de tags produits.
+
+Les exemples de `exemples/` montrent cette séparation : le HTML rend un état
+compréhensible en un coup d'œil ; le TOML et les motifs regex rendent les mêmes
+champs repérables et exploitables par un agent ou un script.
 
 ## Périmètre et suite
 

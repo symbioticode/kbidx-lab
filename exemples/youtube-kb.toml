@@ -1,0 +1,15 @@
+[[youtube_entry]]
+id = "bU5ZDdRnN2M"
+type = "youtube-kb"
+source = "youtube-entry://bU5ZDdRnN2M"
+review_status = "A_REVOIR"
+quality_status = "PRELIMINAIRE"
+agent_state = "EXTRAIT"
+
+[[youtube_entry]]
+id = "8Wwff_ljmks"
+type = "youtube-kb"
+source = "youtube-entry://8Wwff_ljmks"
+review_status = "A_REVOIR"
+quality_status = "PRELIMINAIRE"
+agent_state = "EXTRAIT"
