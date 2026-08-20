@@ -1,0 +1,47 @@
+# KBM — Gouvernance documentaire v1 et graphe local
+
+[[source]]
+id    = "src-kbm-2026-08-10-gouvernance"
+type  = "TRANSCRIPTION"
+titre = "Carte blanche Andrei — normalisation et parcours KBM"
+date  = "2026-08-10"
+
+[[instance]]
+id     = "inst-andrei"
+nom    = "Andrei (porteur KBM — arbitrage)"
+type   = "POSTE"
+parent = ""
+
+[[instance]]
+id     = "inst-claude-code"
+nom    = "Codex (mainteneur — implémentation et contrôle local)"
+type   = "GROUPE_TRAVAIL"
+parent = "inst-andrei"
+
+[[extraction]]
+id          = "ext-kbm-010"
+source_id   = "src-kbm-2026-08-10-gouvernance"
+type        = "LACUNE"
+contenu     = "La KBM mélange numérotation, nomenclature, titres, missions, journaux et SOP ; son parcours IA et son graphe de connaissance ne sont pas stabilisés."
+beta        = "T"
+verif       = "VC"
+decision_id = "dec-kbm-010"
+notes       = "Constat formulé par Andrei et confirmé par l'audit local de 129 artefacts."
+
+[[extraction]]
+id          = "ext-kbm-011"
+source_id   = "src-kbm-2026-08-10-gouvernance"
+type        = "DECISION"
+contenu     = "Adopter une convention prospective, préserver les URL héritées et générer localement un catalogue, un rapport qualité et un graphe déterministe sans API."
+beta        = "T"
+verif       = "VC"
+decision_id = "dec-kbm-010"
+notes       = "Implémentation vérifiée par Codex, instance distincte du décideur."
+
+[[decision]]
+id          = "dec-kbm-010"
+etat        = "CONFIRME"
+enonce      = "CT-KBM-010 : adopter Gouvernance documentaire KBM v1, migration au fil de l'eau et graphe local dérivé sans API."
+instance_id = "inst-andrei"
+source_ids  = ["src-kbm-2026-08-10-gouvernance"]
+notes       = "Andrei a donné carte blanche le 2026-08-10 ; validation mécanique et build assurés par inst-claude-code."

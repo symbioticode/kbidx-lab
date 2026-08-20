@@ -1,0 +1,122 @@
+# KBM — Session client-leger : vérification, backup et documentation (CT-KBM-011)
+
+[[source]]
+id    = "src-client-leger-2026-08-10"
+type  = "TRANSCRIPTION"
+titre = "Session CT-KBM-011 — client-leger : état vérifié, backup VMs, commit, doc KBM"
+date  = "2026-08-10"
+
+[[instance]]
+id     = "inst-andrei"
+nom    = "Andrei (porteur projet — arbitrage)"
+type   = "POSTE"
+parent = ""
+
+[[instance]]
+id     = "inst-opencode"
+nom    = "opencode (exécution — vérification, backup, documentation)"
+type   = "GROUPE_TRAVAIL"
+parent = "inst-andrei"
+
+[[extraction]]
+id          = "ext-cl-2026-08-10-001"
+source_id   = "src-client-leger-2026-08-10"
+type        = "PROCESSUS"
+contenu     = "Backup vzdump (mode stop, zstd) des VMs 131 (golden-win11) et 135 (client-leger-orange) vers le My Passport branché sur Proxmox (.200, /dev/sdd1, /mnt/backup/dump/) : archives 23,54 Go + 23,40 Go, logs OK, SHA256 vérifiés (CHECKSUMS.sha256) et zstd -t OK (78,4 Go décompressés sans erreur)."
+beta        = "T"
+verif       = "VC"
+decision_id = "dec-cl-2026-08-10-001"
+notes       = "Disque cible : My Passport 1,8 To NTFS (UUID F094F9C794F98FF8) ; l'ancienne Seagate n'est plus branchée. Les 4 modifs locales en attente (rdp.sh, selector.nix, 2x preflight-check.sh) ont été commitées et poussées (main 2c540b0 → 4f9d96c)."
+
+[[extraction]]
+id          = "ext-cl-2026-08-10-002"
+source_id   = "src-client-leger-2026-08-10"
+type        = "DECISION"
+contenu     = "Documenter le projet client-leger dans la KBM conformément au plan approuvé : CT-KBM-011 au registre, mise à jour status.md/README, journal 2026-08-10-client-leger-nixos.md et session TOML, commit local du KBM."
+beta        = "T"
+verif       = "VC"
+decision_id = "dec-cl-2026-08-10-001"
+notes       = "Plan validé par Andrei avant exécution."
+
+[[extraction]]
+id          = "ext-cl-2026-08-10-003"
+source_id   = "src-client-leger-2026-08-10"
+type        = "LACUNE"
+contenu     = "Le commit 4f9d96c (réglages de debug selector/rdp) reste non validé en conditions réelles : il faut terminer le premier boot OOBE de la VM 135, relever l'IP réelle et valider le compte RDP cible avant de tester les deux chemins (selector.nix + rdp.sh) ensemble."
+beta        = "T"
+verif       = "VC"
+decision_id = "dec-cl-2026-08-10-001"
+
+[[extraction]]
+id          = "ext-cl-2026-08-10-004"
+source_id   = "src-client-leger-2026-08-10"
+type        = "PRECONDITION"
+contenu     = "Vérifié le 2026-08-10 : le client-leger (HP ProDesk 600 G3, NixOS) est reparti sur le réseau HOME après redémarrage à 192.168.100.100 (SSH 22 + Samba 445 ouverts), IP inchangée. VMs 131/135 arrêtées, infra Home (LXC, dont PiHole .11) éteinte."
+beta        = "T"
+verif       = "VC"
+decision_id = "dec-cl-2026-08-10-001"
+notes       = "Vérifié par balayage ARP/nmap depuis Proxmox."
+
+[[decision]]
+id          = "dec-cl-2026-08-10-001"
+etat        = "CONFIRME"
+enonce      = "CT-KBM-011 : documenter le projet client-leger dans la KBM (vérification d'état, backup VMs 131+135 sur My Passport .200, commit 4f9d96c, mise à jour status/README + journal + session TOML)."
+instance_id = "inst-andrei"
+source_ids  = ["src-client-leger-2026-08-10"]
+notes       = "CT-KBM-011 marqué APPLIQUÉ une fois le backup et la doc vérifiés."
+
+# ---- Session du 2026-08-11 (continuation) ----
+
+[[source]]
+id    = "src-client-leger-2026-08-11"
+type  = "TRANSCRIPTION"
+titre = "Session CT-KBM-011 suite — migration backup 1TB→2TB, SHA, restauration VM 136"
+date  = "2026-08-11"
+
+[[extraction]]
+id          = "ext-cl-2026-08-11-001"
+source_id   = "src-client-leger-2026-08-11"
+type        = "PROCESSUS"
+contenu     = "Migration du backup VMs : rsync -av --info=progress2 complet de /mnt/my_passport/proxmox-backups (MyPassport 1TB local .103) vers /mnt/backup/proxmox-backups (MyPassport 2TB branché Proxmox .200), 33 fichiers, ~104 Go (84G pre-cleanup-20260730 + 13G snap-vm131-pre-fix-net-20260802), durée 3h14, SHA256 vérifiés 33/33 identiques."
+beta        = "T"
+verif       = "VC"
+decision_id = "dec-cl-2026-08-11-001"
+notes       = "rsync -av --info=progress2 ; comparaison diff après tri des deux sha256sum."
+
+[[extraction]]
+id          = "ext-cl-2026-08-11-002"
+source_id   = "src-client-leger-2026-08-11"
+type        = "DECISION"
+contenu     = "Le MyPassport 2TB branché sur Proxmox (.200, /dev/sdd1) devient le disque de sauvegarde principal des VMs/LXC du lab."
+beta        = "T"
+verif       = "VC"
+decision_id = "dec-cl-2026-08-11-001"
+notes       = "Remplace l'ancienne organisation sur le MyPassport 1TB local."
+
+[[extraction]]
+id          = "ext-cl-2026-08-11-003"
+source_id   = "src-client-leger-2026-08-11"
+type        = "DECISION"
+contenu     = "Restauration du snapshot snap-vm131-pre-fix-net-20260802 dans une NOUVELLE VM de référence : VMID 136 nom win11-ref (60 Go, BIOS OVMF, EFI restaurée depuis disk-2), local-lvm suffisant (pas de suppression de PCT). LVM local : ~126 GiB libres après restauration. VMs 131/135 arrêtées avant opération."
+beta        = "T"
+verif       = "VC"
+decision_id = "dec-cl-2026-08-11-001"
+notes       = "Validé : GPT/EFI bootx64.efi + BCD présents, NTFS $MFT OK. VM 136 en l'état stopped."
+
+[[extraction]]
+id          = "ext-cl-2026-08-11-004"
+source_id   = "src-client-leger-2026-08-11"
+type        = "PROCESSUS"
+contenu     = "Suppression des 33 fichiers source sur le MyPassport 1TB (/mnt/my_passport/proxmox-backups) après confirmation SHA256 33/33 identiques avec la copie 2TB (seul l'ordre des lignes des checksums différait)."
+beta        = "T"
+verif       = "VC"
+decision_id = "dec-cl-2026-08-11-001"
+notes       = "Règle : suppression source uniquement après SHA confirmés."
+
+[[decision]]
+id          = "dec-cl-2026-08-11-001"
+etat        = "CONFIRME"
+enonce      = "Transfert 1TB→2TB terminé et vérifié (SHA 33/33), 2TB = backup principal, restauration snap-vm131 effectuée en VM 136 win11-ref (OVMF), source 1TB supprimée après vérification."
+instance_id = "inst-andrei"
+source_ids  = ["src-client-leger-2026-08-11"]
+notes       = "Session de continuation du CT-KBM-011."

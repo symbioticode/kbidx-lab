@@ -1,0 +1,94 @@
+# KBM — Capture session P0/P1 (2026-08-06) : fondations + protocole de reprise
+# Fichier TOML autonome (skill ti360-capture) — schéma v0.3, validé par kb.py
+
+[[source]]
+id    = "src-kbm-2026-08-06-p0-p1"
+type  = "TRANSCRIPTION"
+titre = "Session planning + exécution KBM P0/P1 — Andrei ↔ opencode (2026-08-06)"
+date  = "2026-08-06"
+
+[[reunion]]
+id        = "run-kbm-2026-08-06-001"
+titre     = "Session KBM — fondations, portabilité, protocole de reprise"
+date      = "2026-08-06"
+type      = "WORKSHOP"
+instance_ids = ["inst-andrei", "inst-claude-ai", "inst-claude-code"]
+participants = ["andrei", "opencode (Big Pickle)"]
+source_id  = "src-kbm-2026-08-06-p0-p1"
+decisions_ids = ["dec-kbm-001", "dec-kbm-002"]
+
+[[instance]]
+id     = "inst-andrei"
+nom    = "Andrei (porteur KBM — arbitrage, validation finale)"
+type   = "POSTE"
+parent = ""
+
+[[instance]]
+id     = "inst-claude-ai"
+nom    = "Claude.ai (orchestrateur — discussion, capture)"
+type   = "GROUPE_TRAVAIL"
+parent = "inst-andrei"
+
+[[instance]]
+id     = "inst-claude-code"
+nom    = "Claude Code / OpenCode (mainteneur — exécution P0/P1)"
+type   = "GROUPE_TRAVAIL"
+parent = "inst-andrei"
+
+[[extraction]]
+id          = "ext-kbm-001"
+source_id   = "src-kbm-2026-08-06-p0-p1"
+type        = "CONTRAINTE"
+contenu     = "KBM : nouveau dossier racine dédié (kbm/), deux hubs miroirs bureau/home, corpus forward-only avec un test rétroactif Home, migration journaux par copie+SHA+suppression."
+beta        = "T"
+verif       = "VC"
+decision_id = "dec-kbm-001"
+notes       = "Décisions arbitrées par Andrei (3 réponses au questionnaire de planification). VC = vérifié par Andrei (instance distincte du proposant opencode)."
+
+[[extraction]]
+id          = "ext-kbm-002"
+source_id   = "src-kbm-2026-08-06-p0-p1"
+type        = "PROCESSUS"
+contenu     = "REPRISE.md est le point d'entrée unique : reprise sans friction sur nouvelle machine + nouveau LLM après installation (environnement + fichiers projet)."
+beta        = "T"
+verif       = "NV"
+decision_id = "dec-kbm-002"
+notes       = "Proposé par opencode (inst-claude-ai). HYPOTHESE tant que le test d'instance fraîche (P3) n'a pas validé. NV = pas encore de vérification indépendante."
+
+[[decision]]
+id          = "dec-kbm-001"
+etat        = "CONFIRME"
+enonce      = "Structure KBM validée : racine dédiée //132.246.109.123/c$/temp/kbm (miroir bureau), hubs miroirs bureau+home, corpus TI-360 forward-only avec test rétroactif Home, git local sans remote."
+instance_id = "inst-andrei"
+source_ids  = ["src-kbm-2026-08-06-p0-p1"]
+notes       = "Conforme MANIFEST.md : TI-360 = implémentation de départ, non figée ; portabilité = règle transverses."
+
+[[decision]]
+id          = "dec-kbm-002"
+etat        = "HYPOTHESE"
+enonce      = "CT-KBM-001 : REPRISE.md (protocole de reprise) est le standard d'entrée du KBM ; à confirmer après test d'instance fraîche (P3)."
+instance_id = "inst-claude-ai"
+source_ids  = ["src-kbm-2026-08-06-p0-p1"]
+notes       = "Proposé par opencode. Invariant 7 : reste HYPOTHESE tant qu'une instance distincte n'a pas vérifié (P3)."
+
+[[question]]
+id             = "q-kbm-001"
+bloc           = "0"
+enonce         = "Le protocole REPRISE.md tient-il face à une instance fraîche (nouveau LLM, autre machine) sans friction ? — à prouver par le test P3."
+etat           = "OUVERTE"
+decision_id    = ""
+extraction_ids = ["ext-kbm-002"]
+verif          = "NV"
+baseline_cycles = 0
+ttl_rounds      = 0
+
+[[question]]
+id             = "q-kbm-002"
+bloc           = "0"
+enonce         = "CT-KBM-002 : la procédure de migration d'artefact (copie + SHA256 + suppression) doit-elle devenir un standard formel pour toute future migration ?"
+etat           = "OUVERTE"
+decision_id    = ""
+extraction_ids = ["ext-kbm-001"]
+verif          = "NV"
+baseline_cycles = 0
+ttl_rounds      = 0

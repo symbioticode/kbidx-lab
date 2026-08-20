@@ -1,0 +1,4 @@
+__pycache__/
+index-*/
+tags-*
+triplet/*.json

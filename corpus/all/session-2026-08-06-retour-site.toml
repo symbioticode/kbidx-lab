@@ -1,0 +1,91 @@
+# KBM — Capture session retour site (2026-08-06) : hyperliens + lisibilité ToC
+# Fichier TOML autonome (skill ti360-capture) — schéma v0.3, validé par kb.py
+
+[[source]]
+id    = "src-kbm-2026-08-06-retour-site"
+type  = "TRANSCRIPTION"
+titre = "Retour Andrei sur le site HTML du KBM (2026-08-06) : dette technique de lisibilité"
+date  = "2026-08-06"
+
+[[reunion]]
+id           = "run-kbm-2026-08-06-002"
+titre        = "Revue du site MkDocs + demande de tâche autonome (3 h)"
+date         = "2026-08-06"
+type         = "BILAT"
+source_id    = "src-kbm-2026-08-06-retour-site"
+participants = ["andrei", "opencode (Big Pickle)"]
+
+[[instance]]
+id     = "inst-andrei"
+nom    = "Andrei (porteur KBM — arbitrage, validation finale)"
+type   = "POSTE"
+parent = ""
+
+[[instance]]
+id     = "inst-opencode"
+nom    = "OpenCode / Claude Code (mainteneur — exécution)"
+type   = "GROUPE_TRAVAIL"
+parent = "inst-andrei"
+
+[[extraction]]
+id          = "ext-site-001"
+source_id   = "src-kbm-2026-08-06-retour-site"
+type        = "PROCESSUS"
+contenu     = "Site KBM : les chemins cités dans les journaux (ex. corpus/home/session-2026-08-05-06-infra-home.toml) doivent devenir des hyperliens locaux cliquables ouvrant la page dans le site."
+beta        = "T"
+verif       = "VC"
+notes       = "Retour Andrei item 1. VC = énoncé par Andrei lui-même (source directe)."
+
+[[extraction]]
+id          = "ext-site-002"
+source_id   = "src-kbm-2026-08-06-retour-site"
+type        = "PROCESSUS"
+contenu     = "Site KBM : factoriser la table des matières — une seule entrée principale par date (2026-08-06) avec sous-entrées numérotées ou classées P0, P1... ; l'entrée 4 orpheline (sans P) et l'isolement du registre CT et des prochaines étapes sont des défauts."
+beta        = "T"
+verif       = "VC"
+notes       = "Retour Andrei item 2."
+
+[[extraction]]
+id          = "ext-site-003"
+source_id   = "src-kbm-2026-08-06-retour-site"
+type        = "PROCESSUS"
+contenu     = "Site KBM : raccourcir les entrées de la table des matières pour la lisibilité."
+beta        = "T"
+verif       = "VC"
+notes       = "Retour Andrei item 3."
+
+[[extraction]]
+id          = "ext-site-004"
+source_id   = "src-kbm-2026-08-06-retour-site"
+type        = "PROCESSUS"
+contenu     = "Site KBM : favoriser les retours à la ligne et les listes à puces dans les journaux."
+beta        = "T"
+verif       = "VC"
+notes       = "Retour Andrei item 4."
+
+[[extraction]]
+id          = "ext-site-005"
+source_id   = "src-kbm-2026-08-06-retour-site"
+type        = "CHAMP"
+contenu     = "Site KBM : l'objectif de lecture facile est atteint (retour Andrei) ; poursuivre les améliorations progressivement."
+beta        = "T"
+verif       = "VC"
+decision_id = "dec-site-001"
+notes       = "Feedback positif explicite : 'objectif de lecture facile atteint à 100%'."
+
+[[extraction]]
+id          = "ext-site-006"
+source_id   = "src-kbm-2026-08-06-retour-site"
+type        = "PROCESSUS"
+contenu     = "Site KBM : les fichiers TOML sont destinés aux IA, pas à la lecture humaine ; un catalogue lisible doit indiquer où les trouver et leur contenu, sans exposer le TOML brut à l'humain."
+beta        = "T"
+verif       = "VC"
+notes       = "Retour Andrei item 5. Mise en œuvre : catalogue généré (tooling/gen_corpus_index.py) dans render/corpus/index.md ; les liens humains pointent vers le catalogue, le fichier brut reste accessible pour les IA."
+
+[[decision]]
+id           = "dec-site-001"
+etat         = "CONFIRME"
+enonce       = "Site KBM : l'objectif de lecture facile est atteint (retour Andrei 2026-08-06, 100%) ; les améliorations de lisibilité (hyperliens, ToC factorisée, entrées courtes, puces) se feront progressivement, sans casser la source de vérité .md/TOML."
+instance_id  = "inst-andrei"
+source_ids   = ["src-kbm-2026-08-06-retour-site"]
+notes        = "Arbitré par Andrei, instance distincte du proposant (opencode). Dette technique tracée dans mission-kbm-journal.md (registre CT)."

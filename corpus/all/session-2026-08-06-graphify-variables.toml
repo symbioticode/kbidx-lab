@@ -1,0 +1,131 @@
+# KBM — Capture session analyse (2026-08-06) : Graphify vs TI-360 + couche $VARIABLES
+# Fichier TOML autonome (skill ti360-capture) — schéma v0.3, validé par kb.py
+
+[[source]]
+id    = "src-kbm-2026-08-06-graphify-variables"
+type  = "SYNTHESE"
+titre = "Session analyse Andrei ↔ opencode (2026-08-06) : intégration Graphify, cas métiers-quebec.org, couche variables sensibles"
+date  = "2026-08-06"
+
+[[reunion]]
+id            = "run-kbm-2026-08-06-002"
+titre         = "Arbitrage Graphify vs TI-360 + conception couche $VARIABLES"
+date          = "2026-08-06"
+type          = "ARB"
+instance_ids  = ["inst-andrei", "inst-claude-ai", "inst-claude-code"]
+participants  = ["andrei", "opencode (Big Pickle)"]
+source_id     = "src-kbm-2026-08-06-graphify-variables"
+decisions_ids = ["dec-kbm-003", "dec-kbm-004", "dec-kbm-005"]
+
+[[instance]]
+id     = "inst-andrei"
+nom    = "Andrei (porteur KBM — arbitrage, validation finale)"
+type   = "POSTE"
+parent = ""
+
+[[instance]]
+id     = "inst-claude-ai"
+nom    = "Claude.ai (orchestrateur — discussion, capture)"
+type   = "GROUPE_TRAVAIL"
+parent = "inst-andrei"
+
+[[instance]]
+id     = "inst-claude-code"
+nom    = "Claude Code / OpenCode (mainteneur — exécution, analyse)"
+type   = "GROUPE_TRAVAIL"
+parent = "inst-andrei"
+
+[[extraction]]
+id          = "ext-kbm-003"
+source_id   = "src-kbm-2026-08-06-graphify-variables"
+type        = "CONTRAINTE"
+contenu     = "Graphify est complémentaire à TI-360 : navigation/lecture d'un corpus (vue dérivée, recalculable), TI-360 = capture/décision (source de vérité). Le graphe n'arbitre jamais."
+beta        = "T"
+verif       = "NV"
+decision_id = "dec-kbm-003"
+notes       = "Étayé par le cas réel métiers-quebec.org (2566 nœuds, 303 communautés, 0,41 $). Schéma-sur-lecture = même philosophie que TI-360 (kb010)."
+
+[[extraction]]
+id          = "ext-kbm-004"
+source_id   = "src-kbm-2026-08-06-graphify-variables"
+type        = "CONTRAINTE"
+contenu     = "Couche $VARIABLES : les documents KBM ne contiennent que des placeholders __VAR__ ; les valeurs réelles vivent dans un fichier chiffré créé une seule fois, exclu du graphe."
+beta        = "T"
+verif       = "NV"
+decision_id = "dec-kbm-004"
+notes       = "Neutralise en amont l'envoi des valeurs sensibles à l'API modèle par graphify. Modèle terraform/opentofu (variables.tf / tfvars). Aligné mynix (template + vars.env) mais durable (2 hubs)."
+
+[[extraction]]
+id          = "ext-kbm-005"
+source_id   = "src-kbm-2026-08-06-graphify-variables"
+type        = "PRECONDITION"
+contenu     = "Avant tout usage graphify sur le KBM, la couche $VARIABLES doit exister et le fichier de valeurs être exclu (.graphifyignore) — sinon exfiltration des valeurs vers le fournisseur de modèle."
+beta        = "T"
+verif       = "NV"
+decision_id = "dec-kbm-004"
+notes       = "Condition d'ordre : la couche sensible précède l'outillage de navigation sur le KBM."
+
+[[extraction]]
+id          = "ext-kbm-006"
+source_id   = "src-kbm-2026-08-06-graphify-variables"
+type        = "LACUNE"
+contenu     = "Aucune primitive par défaut (age/X25519, GPG, SOPS+age) n'est post-quantique : ECDH/RSA cassable par Shor. Assurance PQ = configuration symétrique pure (age --passphrase ou SOPS à clé partagée)."
+beta        = "B"
+verif       = "NV"
+decision_id = ""
+notes       = "Lacune documentaire ; résolue par la politique dec-kbm-005 (q-kbm-003 FERMEE). SOPS = cadre (primitive remplaçable si ML-KEM/FIPS 203 s'intègre)."
+
+[[extraction]]
+id          = "ext-kbm-007"
+source_id   = "src-kbm-2026-08-06-graphify-variables"
+type        = "CONTRAINTE"
+contenu     = "Aucune opération critique (arbitrage, valeurs sensibles, décisions) exposée à un LLM non local, y compris le cloud interne AI Zone (Azure OpenAI CNRC) — mêmes exigences de sécurité que l'office."
+beta        = "T"
+verif       = "VC"
+decision_id = "dec-kbm-005"
+notes       = "Politique « hope for the best, get ready for the worst » d'Andrei : si l'office n'expose pas une opération critique à un LLM distant, AI Zone (interne) ne l'expose pas non plus."
+
+[[extraction]]
+id          = "ext-kbm-008"
+source_id   = "src-kbm-2026-08-06-graphify-variables"
+type        = "CONTRAINTE"
+contenu     = "Gradation par environnement : recherche/non-prod = pas de chiffrement ou age --passphrase (pas de sur-ingénierie) ; office/production = SOPS + clé partagée."
+beta        = "T"
+verif       = "VC"
+decision_id = "dec-kbm-005"
+notes       = "Le chiffrement complet (SOPS) ne se justifie que sur l'environnement office ; sur du non-production on fait sans ou avec le minimum (age --passphrase)."
+
+[[decision]]
+id          = "dec-kbm-003"
+etat        = "HYPOTHESE"
+enonce      = "Graphify = substrat de lecture complémentaire à TI-360 pour le KBM (carte de navigation, jamais source de vérité) ; usage cadré : query/explain pour l'orientation d'une instance fraîche (P3)."
+instance_id = "inst-claude-code"
+source_ids  = ["src-kbm-2026-08-06-graphify-variables"]
+notes       = "Proposé par opencode à partir du cas métiers-quebec.org. Invariant 7 : reste HYPOTHESE tant qu'une instance distincte n'a pas validé (Andrei ou test P3)."
+
+[[decision]]
+id          = "dec-kbm-004"
+etat        = "HYPOTHESE"
+enonce      = "Couche $VARIABLES adoptée pour le KBM : placeholders __VAR__ dans les documents, valeurs chiffrées créées une seule fois par Andrei, exclues de graphify. Implémentation = CT-KBM-004."
+instance_id = "inst-claude-code"
+source_ids  = ["src-kbm-2026-08-06-graphify-variables"]
+notes       = "Proposé par opencode. Conception documentée (journal KBM §4). À confirmer par l'implémentation et l'usage réel."
+
+[[decision]]
+id          = "dec-kbm-005"
+etat        = "CONFIRME"
+enonce      = "Politique de sécurité de la couche sensible KBM : gradation par environnement (recherche = sans ou age --passphrase ; office/production = SOPS + clé partagée), et aucune opération critique exposée à un LLM non local, y compris via AI Zone."
+instance_id = "inst-andrei"
+source_ids  = ["src-kbm-2026-08-06-graphify-variables"]
+notes       = "Énoncée par Andrei (« hope for the best, get ready for the worst », pas de sur-ingénierie sur le non-production), formulée en règle par opencode, verif VC (Andrei, instance distincte du proposant)."
+
+[[question]]
+id             = "q-kbm-003"
+bloc           = "0"
+enonce         = "Quelle primitive de chiffrement pour le fichier de variables du KBM ? Résolue : recherche = sans ou age --passphrase ; office = SOPS + clé partagée ; jamais d'exposition critique aux LLM non locaux."
+etat           = "FERMEE"
+decision_id    = "dec-kbm-005"
+extraction_ids = ["ext-kbm-006"]
+verif          = "NV"
+baseline_cycles = 0
+ttl_rounds      = 0

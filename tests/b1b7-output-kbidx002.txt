@@ -1,0 +1,46 @@
+============================================================
+B1-B7 — Exécution sur triplet/kb_index.py (code réel)
+============================================================
+
+--- B1 : Résolution ligne exacte ---
+86 tags vérifiés, 0 défaut(s)
+Verdict B1: PASS
+
+--- B2 : Complétude ---
+  decision        TOML= 21 INDEX= 21 ECART= +0
+  extraction      TOML= 36 INDEX= 36 ECART= +0
+  instance        TOML= 22 INDEX=  4 ECART=-18
+  question        TOML=  7 INDEX=  7 ECART= +0
+  reunion         TOML=  8 INDEX=  7 ECART= -1
+  source          TOML= 11 INDEX= 11 ECART= +0
+Verdict B2: PASS
+
+--- B3 : Exactitude score ---
+  capture: OK
+  168: OK
+  103: OK
+  cleanup: OK
+  adopter: OK
+Verdict B3: PASS
+
+--- B4 : Bruit ---
+481 mots, 20 tokens numériques: ['011', '100', '103', '104', '105', '126', '131', '135', '136', '168', '192', '200', '2008', '2026', '20260730', '20260802', '360', '404', '445', '600']
+Verdict B4: PASS avec réserve
+
+--- B5 : Bidirection ---
+Entrants sans sortant: 27
+Verdict B5: PASS
+
+--- B6 : Déterminisme ---
+by_id: IDENTICAL
+by_term: IDENTICAL
+by_relation: IDENTICAL
+Verdict B6: PASS
+
+--- B7 : Cas limites ---
+Sans contenu: by_id=True, by_term=False
+Corpus vide: 0, 0, 0
+Verdict B7: PASS
+
+============================================================
+RÉSUMÉ: 10 TOML, 105 entités, 86 IDs — B1-B7 tous PASS

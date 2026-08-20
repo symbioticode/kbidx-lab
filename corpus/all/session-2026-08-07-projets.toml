@@ -1,0 +1,64 @@
+# KBM — Capture session projets (2026-08-07) : client-leger (nixos + guacamole) + netpulse
+# Fichier TOML autonome (skill ti360-capture) — schéma v0.3, validé par kb.py
+
+[[source]]
+id    = "src-kbm-2026-08-07-projets"
+type  = "TRANSCRIPTION"
+titre = "Intégration des projets client-leger-nixos, client-leger-guacamole (GitHub symbioticode) et netpulse (GitHub dravitch) dans la KBM — fusion nav Projets (2026-08-07)"
+date  = "2026-08-07"
+
+[[reunion]]
+id           = "run-kbm-2026-08-07-001"
+titre        = "Ajout des projets client-leger et netpulse dans le site KBM + fusion nav Projets"
+date         = "2026-08-07"
+type         = "BILAT"
+source_id    = "src-kbm-2026-08-07-projets"
+participants = ["andrei", "opencode (Big Pickle)"]
+
+[[instance]]
+id     = "inst-andrei"
+nom    = "Andrei (porteur KBM — arbitrage, validation finale)"
+type   = "POSTE"
+parent = ""
+
+[[instance]]
+id     = "inst-opencode"
+nom    = "OpenCode / Big Pickle (mainteneur — exécution)"
+type   = "GROUPE_TRAVAIL"
+parent = "inst-andrei"
+
+[[extraction]]
+id          = "ext-projets-002"
+source_id   = "src-kbm-2026-08-07-projets"
+type        = "CONTRAINTE"
+contenu     = "KBM : intégrer en miroir les .md de client-leger-nixos, client-leger-guacamole (dépôts GitHub symbioticode) et netpulse (GitHub dravitch) ; le code et le reste restent dans les dépôts (liens GitHub canoniques). Les .md du dossier NetPulse sont ignorés — la source netpulse est uniquement bigpickle/extractions/ (5 TOML, schéma v0.3)."
+beta        = "T"
+verif       = "VC"
+decision_id = "dec-projets-002"
+notes       = "Directive Andrei. NetPulse : synthèse reconstruite (NETPULSE.md) depuis les 5 chunks, pas de copie des .md du projet. Liens GitHub canoniques = origin des dépôts."
+
+[[extraction]]
+id          = "ext-projets-003"
+source_id   = "src-kbm-2026-08-07-projets"
+type        = "CONTRAINTE"
+contenu     = "Menu KBM : fusion des sections « Journaux » et « Projets » en une section « Projets » unique — 3 journaux de mission (KBM, VM108, Home) + index des projets (projets/index.md) ; l'entrée « Projets » séparée est supprimée."
+beta        = "T"
+verif       = "VC"
+decision_id = "dec-projets-003"
+notes       = "Décision Andrei (fusion). Appliquée dans mkdocs.yml (nav) et index.md (accueil)."
+
+[[decision]]
+id           = "dec-projets-002"
+etat         = "CONFIRME"
+enonce       = "Les projets client-leger-nixos, client-leger-guacamole et netpulse entrent dans la KBM en miroir (projets/), le code restant dans les dépôts GitHub (liens canoniques). NetPulse : source = bigpickle/extractions/ uniquement, synthèse NETPULSE.md écrite."
+instance_id  = "inst-andrei"
+source_ids   = ["src-kbm-2026-08-07-projets"]
+notes        = "Miroirs : projets/client-leger-nixos/, projets/client-leger-guacamole/, projets/netpulse/. Liens : github.com/symbioticode/client-leger-nixos, github.com/symbioticode/client-leger-guacamole, github.com/dravitch/netpulse + github.com/dravitch/dsig-standard."
+
+[[decision]]
+id           = "dec-projets-003"
+etat         = "CONFIRME"
+enonce       = "Fusion de la navigation KBM : une seule section « Projets » (3 journaux de mission + index des projets), suppression de l'entrée « Projets » séparée — appliquée sur mkdocs.yml et l'accueil index.md."
+instance_id  = "inst-andrei"
+source_ids   = ["src-kbm-2026-08-07-projets"]
+notes        = "Option « Fusion » retenue par Andrei lors du choix de structure."

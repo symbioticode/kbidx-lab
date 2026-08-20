@@ -1,0 +1,57 @@
+# KBM — Identité git du hub HOME (2026-08-06) : nouvelle clé SSH + user.name/email
+# Fichier TOML autonome (skill ti360-capture) — schéma v0.3, validé par kb.py
+
+[[source]]
+id    = "src-kbm-2026-08-06-identite-git"
+type  = "TRANSCRIPTION"
+titre = "Configuration de l'identité git du hub HOME (/root/kbm) — Andrei ↔ opencode (2026-08-06)"
+date  = "2026-08-06"
+
+[[reunion]]
+id           = "run-kbm-2026-08-06-006"
+titre        = "Identité git du hub HOME — nouvelle clé SSH andrei.dinga@d2s-tech.com"
+date         = "2026-08-06"
+type         = "BILAT"
+source_id    = "src-kbm-2026-08-06-identite-git"
+participants = ["andrei", "opencode (Big Pickle)"]
+
+[[instance]]
+id     = "inst-andrei"
+nom    = "Andrei (porteur KBM — arbitrage, validation finale)"
+type   = "POSTE"
+parent = ""
+
+[[instance]]
+id     = "inst-opencode"
+nom    = "OpenCode / Big Pickle (mainteneur — exécution)"
+type   = "GROUPE_TRAVAIL"
+parent = "inst-andrei"
+
+[[extraction]]
+id          = "ext-git-001"
+source_id   = "src-kbm-2026-08-06-identite-git"
+type        = "CONTRAINTE"
+contenu     = "Hub HOME (/root/kbm) : identité git locale configurée (user.name=Andrei Dinga-Reassi, user.email=andrei.dinga@d2s-tech.com), nouvelle clé SSH id_ed25519_home commentée andrei.dinga@d2s-tech.com générée sur pve200 et ajoutée à authorized_keys."
+beta        = "T"
+verif       = "VC"
+decision_id = "dec-git-001"
+notes       = "Arbitré par Andrei (choix : nouvelle clé + email d2s-tech). VC : vérifié par exécution (git var GIT_AUTHOR_IDENT) + validation Andrei."
+
+[[decision]]
+id           = "dec-git-001"
+etat         = "CONFIRME"
+enonce       = "Identité de commit du hub HOME (/root/kbm) : Andrei Dinga-Reassi <andrei.dinga@d2s-tech.com> via la clé SSH id_ed25519_home ; tout commit HOME se fait sous cette identité."
+instance_id  = "inst-andrei"
+source_ids   = ["src-kbm-2026-08-06-identite-git"]
+notes        = "Hub OFFICE (C:\\temp\\kbm) : les commits historiques portent andrei.dinga-reassi@nrc-cnrc.gc.ca — écart d'identité inter-hubs à aligner (q-git-001). Clé sans passphrase (automation serveur), perms 600."
+
+[[question]]
+id             = "q-git-001"
+etat           = "OUVERTE"
+bloc           = "0"
+decision_id    = ""
+extraction_ids = ["ext-git-001"]
+verif          = "NV"
+baseline_cycles = 0
+ttl_rounds      = 0
+enonce         = "Aligner l'identité git du hub OFFICE (C:\\temp\\kbm, aujourd'hui andrei.dinga-reassi@nrc-cnrc.gc.ca) sur andrei.dinga@d2s-tech.com pour une cohérence inter-hubs des auteurs de commit ?"

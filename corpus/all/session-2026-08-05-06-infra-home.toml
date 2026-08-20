@@ -1,0 +1,142 @@
+# KBM — Capture test rétroactif Home (2026-08-05/06) : intervention infra pve200
+# Source : journals/mission-home-journal.md — schéma v0.3, validé par kb.py
+
+[[source]]
+id    = "src-home-2026-08-05-06"
+type  = "ANALYSIS"
+titre = "Mission Infra Home — journal de bord (2026-08-05/06) : sauvegarde CT + restauration VM 108 sur pve200"
+date  = "2026-08-05"
+
+[[reunion]]
+id            = "run-home-2026-08-05-001"
+titre         = "Intervention infra Home (pve200) — restauration VM 135, sauvegarde des 17 CT, diagnostic sda"
+date          = "2026-08-05"
+type          = "WORKSHOP"
+instance_ids  = ["inst-andrei", "inst-opencode"]
+participants  = ["andrei", "opencode (Big Pickle)"]
+source_id     = "src-home-2026-08-05-06"
+decisions_ids = ["dec-home-001", "dec-home-002", "dec-home-003", "dec-home-004", "dec-home-005"]
+
+[[instance]]
+id     = "inst-andrei"
+nom    = "Andrei (admin infra — exécution PVE, validation finale)"
+type   = "POSTE"
+parent = ""
+
+[[instance]]
+id     = "inst-opencode"
+nom    = "OpenCode / Big Pickle (assistant — procédures, vérification)"
+type   = "GROUPE_TRAVAIL"
+parent = "inst-andrei"
+
+[[extraction]]
+id          = "ext-home-001"
+source_id   = "src-home-2026-08-05-06"
+type        = "CONTRAINTE"
+contenu     = "Le host pve200 (RAM 7,7 Go) swape dès que la VM 135 (8 Go) tourne : iowait ~85 %, backups asphyxiés."
+beta        = "T"
+verif       = "VC"
+decision_id = ""
+notes       = "Constaté en session (§1.5 journal). Débit backups réel ~2,6 Mo/s (goulot USB 2.0 + NTFS write-through)."
+
+[[extraction]]
+id          = "ext-home-002"
+source_id   = "src-home-2026-08-05-06"
+type        = "LACUNE"
+contenu     = "Agent guest Windows muet : Xeon E3110 (2008) sans SSE4.2, sous prérequis Win11 — boot réel de la VM 135 à confirmer."
+beta        = "B"
+verif       = "NV"
+decision_id = ""
+notes       = "Ne peut pas être tranché à distance depuis le bureau ; vérification au retour Home."
+
+[[extraction]]
+id          = "ext-home-003"
+source_id   = "src-home-2026-08-05-06"
+type        = "LACUNE"
+contenu     = "CT 105 : vzdump se fige à 0 octet alors que le fs est propre (e2fsck OK) — backup à retenter."
+beta        = "B"
+verif       = "NV"
+decision_id = ""
+notes       = "q-home-001 : le backup passe-t-il avec le nœud déchargé (VM 135 arrêtée) ?"
+
+[[extraction]]
+id          = "ext-home-004"
+source_id   = "src-home-2026-08-05-06"
+type        = "DECISION"
+contenu     = "Les 10 CT au rootfs backup-zfs* avaient un pool ZFS disparu (volumes inexistants) : réparés par repointage local-lvm + mkfs.ext4 ; leurs données sont perdues."
+beta        = "T"
+verif       = "VC"
+decision_id = "dec-home-005"
+notes       = "Aucun zpool backup n'existe sur ce PVE : les données des 10 CT n'existent nulle part."
+
+[[extraction]]
+id          = "ext-home-005"
+source_id   = "src-home-2026-08-05-06"
+type        = "LACUNE"
+contenu     = "Disque USB Seagate sdd (monté /mnt/seagate) disparu en cours de session : montage orphelin à nettoyer."
+beta        = "T"
+verif       = "VC"
+decision_id = ""
+notes       = "À traiter au retour Home : démontage et nettoyage de l'entrée."
+
+[[decision]]
+id          = "dec-home-005"
+etat        = "CONFIRME"
+enonce      = "Les 10 CT au rootfs backup-zfs* (pool disparu) sont réparés par repointage local-lvm + volumes thin + mkfs.ext4, malgré la perte de leurs données."
+instance_id = "inst-andrei"
+source_ids  = ["src-home-2026-08-05-06"]
+notes       = "Aucun zpool backup sur ce PVE : les données n'existent nulle part ; CT vides relancables."
+
+[[decision]]
+id          = "dec-home-001"
+etat        = "CONFIRME"
+enonce      = "VM 108 restaurée en VM 135 sur local-lvm (échec latent de la 1re restauration sur sda défaillant) avec cores:2 (max nœud) — VM running."
+instance_id = "inst-andrei"
+source_ids  = ["src-home-2026-08-05-06"]
+notes       = "Écriture vérifiée (lecture 101 Mo/s, 0 I/O error, 35 % sparse)."
+
+[[decision]]
+id          = "dec-home-002"
+etat        = "CONFIRME"
+enonce      = "Suppression des VMs sans backup 130 (client-leger-black), 131 (client-leger-orange), 133 (guacamole) pour libérer le thinpool local-lvm 100 % plein."
+instance_id = "inst-andrei"
+source_ids  = ["src-home-2026-08-05-06"]
+notes       = "≈ 243 G libérés ; valide car aucune de ces VMs n'avait de sauvegarde."
+
+[[decision]]
+id          = "dec-home-003"
+etat        = "CONFIRME"
+enonce      = "Disque sda défaillant (secteurs défectueux ~612-708 Go) retiré de PVE + entrée fstab supprimée + démontage ; à débrancher physiquement."
+instance_id = "inst-andrei"
+source_ids  = ["src-home-2026-08-05-06"]
+notes       = "Cause des erreurs I/O de lecture et superblock illisible."
+
+[[decision]]
+id          = "dec-home-004"
+etat        = "CONFIRME"
+enonce      = "Cible de sauvegarde Home = stockage usb-fst (dir /mnt/fstbackup, NTFS via ntfs-3g) ; 16 archives CT vérifiées zstd -t OK."
+instance_id = "inst-andrei"
+source_ids  = ["src-home-2026-08-05-06"]
+notes       = "Contient aussi la VM 108 restaurée (backup du 2026-08-04 du §22.1 journal bureau)."
+
+[[question]]
+id             = "q-home-001"
+bloc           = "0"
+enonce         = "CT 105 : le backup vzdump passe-t-il une fois le nœud déchargé (VM 135 arrêtée) ? prévu au retour Home ~19:00."
+etat           = "OUVERTE"
+decision_id    = ""
+extraction_ids = ["ext-home-003"]
+verif          = "NV"
+baseline_cycles = 0
+ttl_rounds      = 0
+
+[[question]]
+id             = "q-home-002"
+bloc           = "0"
+enonce         = "Win11 boote-t-il réellement sur la VM 135 malgré le Xeon E3110 sans SSE4.2 (agent muet) ?"
+etat           = "OUVERTE"
+decision_id    = ""
+extraction_ids = ["ext-home-002"]
+verif          = "NV"
+baseline_cycles = 0
+ttl_rounds      = 0
