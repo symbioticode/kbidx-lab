@@ -30,3 +30,5 @@ item-level signal count.
 The portfolio projection preserves each workspace's observation timestamp in
 `observed_at` and `workspace_observed_at`; it does not pretend that all
 workspaces were observed simultaneously.
+It also records the effective marker list per workspace and its own
+`generated_at` timestamp.

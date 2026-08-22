@@ -5,6 +5,7 @@ import html
 import json
 import subprocess
 import sys
+from datetime import datetime, timezone
 from pathlib import Path
 
 
@@ -23,6 +24,7 @@ def main() -> None:
         parser.error("workspace directory names must be unique")
     items = []
     observed_at = {}
+    markers_by_workspace = {}
     for directory in args.directories:
         refresh_args = [sys.executable, str(ROOT / "refresh.py"), str(directory)]
         for marker in args.markers or []:
@@ -31,6 +33,7 @@ def main() -> None:
         context = directory / "generated/context.json"
         data = json.loads(context.read_text(encoding="utf-8"))
         observed_at[directory.name] = data.get("observed_at", "unknown")
+        markers_by_workspace[directory.name] = data.get("markers", [])
         for item in data.get("items", []):
             copy = dict(item)
             copy["workspace"] = directory.name
@@ -38,7 +41,7 @@ def main() -> None:
             items.append(copy)
     items.sort(key=lambda item: (PRIORITY_ORDER.get(str(item.get("priority", "")).upper(), 3), str(item.get("workspace", "")), str(item.get("id", ""))))
     args.output.mkdir(parents=True, exist_ok=True)
-    payload = {"schema_version": 1, "workspaces": workspace_names, "markers": args.markers, "observed_at": observed_at, "items": items}
+    payload = {"schema_version": 1, "generated_at": datetime.now(timezone.utc).isoformat(), "workspaces": workspace_names, "markers": markers_by_workspace, "observed_at": observed_at, "items": items}
     (args.output / "portfolio.json").write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     rows = "".join(
         "<tr>" + "".join(f"<td>{html.escape(str(item.get(field, '')))}</td>" for field in ("workspace", "id", "kind", "state", "priority", "signal_count", "workspace_observed_at")) + "</tr>"
