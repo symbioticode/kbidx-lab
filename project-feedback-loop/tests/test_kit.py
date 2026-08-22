@@ -143,6 +143,17 @@ class KitTests(unittest.TestCase):
             self.assertEqual(item["source_match"], "none")
             self.assertEqual(item["signal_count"], 0)
 
+    def test_html_projection_escapes_declared_values(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            registry = root / "registry.json"
+            registry.write_text(json.dumps({"schema_version": 1, "items": [
+                {"id": "<script>alert(1)</script>", "kind": "project", "state": "ACTIVE", "priority": "HIGH"},
+            ]}), encoding="utf-8")
+            result = subprocess.run([sys.executable, str(ROOT / "kit/render_context.py"), str(registry), "--format", "html"], check=True, capture_output=True, text=True)
+            self.assertNotIn("<script>alert(1)</script>", result.stdout)
+            self.assertIn("&lt;script&gt;alert(1)&lt;/script&gt;", result.stdout)
+
     def test_observer_does_not_follow_symlinks(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
