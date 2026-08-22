@@ -43,7 +43,9 @@ jobs:
           assert [item['id'] for item in d['items']] == ['ALPHA-001', 'CT-2026-015'];
           assert all(item['workspace_observed_at'] != 'unknown' for item in d['items']);
           m=json.load(open('portfolio-generated/manifest.json'));
-          assert m['artifacts'] == ['portfolio.json', 'portfolio.html']"
+          assert m['artifacts'] == ['portfolio.json', 'portfolio.html'];
+          r=json.load(open('examples/minimal/generated/manifest.json'));
+          assert r['artifacts'] == ['registry.json', 'observations.json', 'context.txt', 'context.html', 'context.json']"
 
   windows-wrapper:
     runs-on: windows-latest
