@@ -40,7 +40,7 @@ def render_html(items: list[dict], signal_count: int, observed_at: str = "unknow
         for item in items
     )
     marker_text = ", ".join(markers or [])
-    return "<!doctype html>\n<h1>Feedback context</h1><p>Observations: " + str(signal_count) + " | Observed at: " + html.escape(observed_at) + " | Markers: " + html.escape(marker_text) + "</p><table><thead><tr><th>ID</th><th>Kind</th><th>State</th><th>Priority</th><th>Signals</th></tr></thead><tbody>" + rows + "</tbody></table>\n"
+    return "<!doctype html>\n<meta charset=\"utf-8\"><style>body{font:1rem system-ui,sans-serif;line-height:1.4;margin:2rem;color:#17202a}table{border-collapse:collapse;width:100%;max-width:70rem}caption{text-align:left;font-size:1.4rem;font-weight:700;margin-bottom:.5rem}th,td{border:1px solid #ccd;padding:.5rem;text-align:left}th{background:#eef2f5}tr:nth-child(even){background:#f8fafb}@media(max-width:40rem){body{margin:.75rem}table{font-size:.85rem;display:block;overflow-x:auto;white-space:nowrap}}</style><h1>Feedback context</h1><p>Observations: " + str(signal_count) + " | Observed at: " + html.escape(observed_at) + " | Markers: " + html.escape(marker_text) + "</p><table><caption>Tracked units</caption><thead><tr><th>ID</th><th>Kind</th><th>State</th><th>Priority</th><th>Signals</th></tr></thead><tbody>" + rows + "</tbody></table>\n"
 
 
 def main():
