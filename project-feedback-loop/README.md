@@ -82,6 +82,10 @@ small and replaceable. Adapt the source paths, states, scheduler, and dashboard
 to your environment. The individual scripts remain available when a deployment
 needs separate stages.
 
+The minimal fixture includes three source files. Run the command and inspect
+`generated/context.html` to see the project and change-ticket signals linked
+to their declared sources; the knowledge article remains signal-free.
+
 ## Windows contributions welcome
 
 The first reference commands use Python and Unix-style examples, but Windows
