@@ -85,6 +85,12 @@ small and replaceable. Adapt the source paths, states, scheduler, and dashboard
 to your environment. The individual scripts remain available when a deployment
 needs separate stages.
 
+## Runtime requirements
+
+The kit requires Python 3.11 or newer because it uses the standard-library
+`tomllib` parser. It has no third-party runtime dependency and does not require
+an AI service, database, or network connection.
+
 For several projects, aggregate their refreshed contexts into one portfolio:
 
 ```bash
