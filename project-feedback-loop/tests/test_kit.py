@@ -280,5 +280,16 @@ class KitTests(unittest.TestCase):
             self.assertIn("excluded_dirs: node_modules", (root / "generated/context.txt").read_text())
             self.assertIn("Excluded directories: node_modules", (root / "generated/context.html").read_text())
 
+    def test_excluded_directory_does_not_match_source_ancestors(self):
+        with tempfile.TemporaryDirectory() as directory:
+            parent = Path(directory)
+            root = parent / "workspace"
+            root.mkdir()
+            (root / "STATUS.md").write_text("TODO: source signal\n", encoding="utf-8")
+            result = subprocess.run([sys.executable, str(ROOT / "kit/observer.py"), str(root), "--exclude-dir", parent.name], capture_output=True, text=True)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            observations = json.loads((root / "observations.json").read_text())
+            self.assertEqual(len(observations["signals"]), 1)
+
 if __name__ == "__main__":
     unittest.main()

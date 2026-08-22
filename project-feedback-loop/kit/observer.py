@@ -12,7 +12,8 @@ def observe(root: Path, excluded: Path | None = None, markers: tuple[str, ...] =
     for path in sorted(root.rglob("*")):
         if path.is_symlink():
             continue
-        if any(part in excluded_dirs for part in path.parts):
+        relative_parts = path.relative_to(root).parts
+        if any(part in excluded_dirs for part in relative_parts):
             continue
         if excluded and (path == excluded or excluded in path.parents):
             continue
