@@ -135,6 +135,21 @@ class KitTests(unittest.TestCase):
             self.assertTrue((output_root / "alpha/context.json").exists())
             self.assertFalse((workspace / "generated").exists())
 
+    def test_portfolio_html_escapes_declared_values(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            workspace = root / "alpha"
+            workspace.mkdir()
+            (workspace / "registry.toml").write_text(
+                '[[item]]\nid = "<script>alert(1)</script>"\nkind = "project"\nstate = "ACTIVE"\npriority = "HIGH"\n',
+                encoding="utf-8",
+            )
+            output = root / "portfolio"
+            subprocess.run([sys.executable, str(ROOT / "kit/portfolio.py"), str(workspace), "--output", str(output)], check=True)
+            rendered = (output / "portfolio.html").read_text(encoding="utf-8")
+            self.assertNotIn("<script>alert(1)</script>", rendered)
+            self.assertIn("&lt;script&gt;alert(1)&lt;/script&gt;", rendered)
+
     def test_portfolio_rejects_duplicate_workspace_names(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
