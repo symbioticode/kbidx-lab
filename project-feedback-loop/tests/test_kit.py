@@ -61,5 +61,20 @@ class KitTests(unittest.TestCase):
             self.assertNotEqual(result.returncode, 0)
             self.assertIn("duplicate item id", result.stderr)
 
+    def test_ambiguous_source_is_not_assigned(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            registry = root / "registry.json"
+            registry.write_text(json.dumps({"schema_version": 1, "items": [
+                {"id": "one", "kind": "project", "state": "ACTIVE", "priority": "LOW", "source": "STATUS.md"},
+                {"id": "two", "kind": "project", "state": "ACTIVE", "priority": "LOW", "source": "STATUS.md"},
+            ]}), encoding="utf-8")
+            observations = root / "observations.json"
+            observations.write_text(json.dumps({"signals": [{"source": str(root / "STATUS.md")}, {"source": str(root / "STATUS.md")}] }), encoding="utf-8")
+            result = subprocess.run([sys.executable, str(ROOT / "kit/render_context.py"), str(registry), "--observations", str(observations), "--format", "json"], check=True, capture_output=True, text=True)
+            items = json.loads(result.stdout)["items"]
+            self.assertEqual([item["signal_count"] for item in items], [0, 0])
+            self.assertEqual({item["source_match"] for item in items}, {"ambiguous"})
+
 if __name__ == "__main__":
     unittest.main()

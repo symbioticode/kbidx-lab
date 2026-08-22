@@ -18,4 +18,6 @@ ran; they do not certify that the source declaration was correct.
 When an observed signal's filename matches an item's declared `source`, the
 rendered projections expose that relationship as `signal_count`. Unmatched
 signals remain visible in the observation artifact and are not silently
-assigned to an item.
+assigned to an item. If more than one item declares the same source filename,
+the projection marks the match `ambiguous` and assigns zero item-level signals;
+this avoids false certainty.
