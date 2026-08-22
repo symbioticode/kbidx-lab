@@ -41,7 +41,9 @@ jobs:
           python -c "import json; d=json.load(open('portfolio-generated/portfolio.json'));
           assert d['workspaces'] == ['team-alpha', 'team-beta'];
           assert [item['id'] for item in d['items']] == ['ALPHA-001', 'CT-2026-015'];
-          assert all(item['workspace_observed_at'] != 'unknown' for item in d['items'])"
+          assert all(item['workspace_observed_at'] != 'unknown' for item in d['items']);
+          m=json.load(open('portfolio-generated/manifest.json'));
+          assert m['artifacts'] == ['portfolio.json', 'portfolio.html']"
 
   windows-wrapper:
     runs-on: windows-latest
@@ -58,4 +60,6 @@ jobs:
         run: .\schedulers\windows-task-scheduler\refresh.ps1 -RepositoryRoot $PWD -Python python
       - name: Check generated context
         shell: pwsh
-        run: if (-not (Test-Path .\examples\minimal\generated\context.html)) { throw "context.html was not generated" }
+        run: |
+          if (-not (Test-Path .\examples\minimal\generated\context.html)) { throw "context.html was not generated" }
+          if (-not (Test-Path .\examples\minimal\generated\manifest.json)) { throw "manifest.json was not generated" }
