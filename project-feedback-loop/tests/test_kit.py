@@ -49,6 +49,17 @@ class KitTests(unittest.TestCase):
             self.assertEqual(len(signals), 2)
             self.assertEqual({signal["source"] for signal in signals}, {str(root / "notes.md"), str(root / "STATUS.md")})
 
+    def test_failed_refresh_invalidates_old_manifest(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            output = root / "generated"
+            output.mkdir()
+            (output / "manifest.json").write_text('{"stale": true}\n', encoding="utf-8")
+            (root / "registry.toml").write_text("[[item]]\nid = 42\n", encoding="utf-8")
+            result = subprocess.run([sys.executable, str(ROOT / "kit/refresh.py"), str(root)], capture_output=True, text=True)
+            self.assertNotEqual(result.returncode, 0)
+            self.assertFalse((output / "manifest.json").exists())
+
     def test_registry_rejects_missing_lifecycle_fields(self):
         with tempfile.TemporaryDirectory() as directory:
             source = Path(directory) / "registry.toml"
@@ -169,6 +180,20 @@ class KitTests(unittest.TestCase):
             result = subprocess.run([sys.executable, str(ROOT / "kit/portfolio.py"), str(first), str(second)], capture_output=True, text=True)
             self.assertNotEqual(result.returncode, 0)
             self.assertIn("workspace directory names must be unique", result.stderr)
+
+    def test_failed_portfolio_invalidates_old_manifest(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            workspace = root / "alpha"
+            workspace.mkdir()
+            (workspace / "registry.toml").write_text('[[item]]\nid = "P-1"\nkind = "project"\nstate = "ACTIVE"\npriority = "LOW"\n', encoding="utf-8")
+            output = root / "portfolio"
+            output.mkdir()
+            (output / "manifest.json").write_text('{"stale": true}\n', encoding="utf-8")
+            missing = root / "missing"
+            result = subprocess.run([sys.executable, str(ROOT / "kit/portfolio.py"), str(workspace), str(missing), "--output", str(output)], capture_output=True, text=True)
+            self.assertNotEqual(result.returncode, 0)
+            self.assertFalse((output / "manifest.json").exists())
 
     def test_ambiguous_source_is_not_assigned(self):
         with tempfile.TemporaryDirectory() as directory:
