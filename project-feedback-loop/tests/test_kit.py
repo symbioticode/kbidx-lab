@@ -94,6 +94,18 @@ class KitTests(unittest.TestCase):
             self.assertEqual([item["signal_count"] for item in items], [0, 0])
             self.assertEqual({item["source_match"] for item in items}, {"ambiguous"})
 
+    def test_missing_source_is_explicitly_unmatched(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            registry = root / "registry.json"
+            registry.write_text(json.dumps({"schema_version": 1, "items": [
+                {"id": "no-source", "kind": "project", "state": "ACTIVE", "priority": "LOW"},
+            ]}), encoding="utf-8")
+            result = subprocess.run([sys.executable, str(ROOT / "kit/render_context.py"), str(registry), "--format", "json"], check=True, capture_output=True, text=True)
+            item = json.loads(result.stdout)["items"][0]
+            self.assertEqual(item["source_match"], "none")
+            self.assertEqual(item["signal_count"], 0)
+
     def test_observer_does_not_follow_symlinks(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

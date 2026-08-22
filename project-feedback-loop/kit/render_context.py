@@ -12,14 +12,17 @@ def enrich(items: list[dict], signals: list[dict]) -> list[dict]:
         by_name[name] = by_name.get(name, 0) + 1
     declared: dict[str, int] = {}
     for item in items:
-        source = Path(str(item.get("source", ""))).name
-        declared[source] = declared.get(source, 0) + 1
+        raw_source = item.get("source")
+        if raw_source:
+            source = Path(str(raw_source)).name
+            declared[source] = declared.get(source, 0) + 1
     enriched = []
     for item in items:
         copy = dict(item)
-        source = Path(str(item.get("source", ""))).name
-        copy["signal_count"] = by_name.get(source, 0) if declared.get(source) == 1 else 0
-        copy["source_match"] = "unique" if declared.get(source) == 1 else "ambiguous"
+        raw_source = item.get("source")
+        source = Path(str(raw_source)).name if raw_source else ""
+        copy["signal_count"] = by_name.get(source, 0) if source and declared.get(source) == 1 else 0
+        copy["source_match"] = "unique" if source and declared.get(source) == 1 else ("ambiguous" if source else "none")
         enriched.append(copy)
     return enriched
 

@@ -24,3 +24,5 @@ signals remain visible in the observation artifact and are not silently
 assigned to an item. If more than one item declares the same source filename,
 the projection marks the match `ambiguous` and assigns zero item-level signals;
 this avoids false certainty.
+Items without a declared source are marked `none` and likewise receive no
+item-level signal count.
