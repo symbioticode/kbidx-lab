@@ -1,0 +1,10 @@
+[Unit]
+Description=Refresh the local project feedback context periodically
+
+[Timer]
+OnCalendar=*-*-* 06:15:00
+Persistent=true
+Unit=feedback-loop.service
+
+[Install]
+WantedBy=timers.target

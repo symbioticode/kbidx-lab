@@ -1,0 +1,20 @@
+[[item]]
+id = "demo-project"
+kind = "project"
+state = "ACTIVE"
+priority = "HIGH"
+source = "STATUS.md"
+
+[[item]]
+id = "CT-2026-014"
+kind = "change_ticket"
+state = "PROPOSED"
+priority = "MEDIUM"
+source = "change-ticket.md"
+
+[[item]]
+id = "KB-001"
+kind = "knowledge_article"
+state = "ACTIVE"
+priority = "LOW"
+source = "article.md"
