@@ -30,6 +30,12 @@ jobs:
         run: python kit/refresh.py examples/minimal
       - name: Run portfolio example
         run: python kit/portfolio.py examples/portfolio/team-alpha examples/portfolio/team-beta --output portfolio-generated
+      - name: Verify portfolio projection
+        run: >-
+          python -c "import json; d=json.load(open('portfolio-generated/portfolio.json'));
+          assert d['workspaces'] == ['team-alpha', 'team-beta'];
+          assert [item['id'] for item in d['items']] == ['ALPHA-001', 'CT-2026-015'];
+          assert all(item['workspace_observed_at'] != 'unknown' for item in d['items'])"
 
   windows-wrapper:
     runs-on: windows-latest
