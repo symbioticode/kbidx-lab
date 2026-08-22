@@ -9,6 +9,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).parent
+PRIORITY_ORDER = {"HIGH": 0, "MEDIUM": 1, "LOW": 2}
 
 
 def main() -> None:
@@ -32,6 +33,7 @@ def main() -> None:
             copy = dict(item)
             copy["workspace"] = directory.name
             items.append(copy)
+    items.sort(key=lambda item: (PRIORITY_ORDER.get(str(item.get("priority", "")).upper(), 3), str(item.get("workspace", "")), str(item.get("id", ""))))
     args.output.mkdir(parents=True, exist_ok=True)
     payload = {"schema_version": 1, "workspaces": workspace_names, "markers": args.markers, "items": items}
     (args.output / "portfolio.json").write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")

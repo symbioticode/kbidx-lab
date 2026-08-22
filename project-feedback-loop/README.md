@@ -90,7 +90,8 @@ python3 kit/portfolio.py examples/project-a examples/project-b \
 ```
 
 The portfolio keeps each item's `workspace` origin and produces both JSON and
-HTML views.
+HTML views. Its default ordering puts high-priority work first, followed by
+medium, low, and unknown priorities.
 
 The minimal fixture includes three source files. Run the command and inspect
 `generated/context.html` to see the project and change-ticket signals linked

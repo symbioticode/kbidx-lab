@@ -83,11 +83,11 @@ class KitTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             workspaces = []
-            for name, item_id in (("alpha", "P-1"), ("beta", "CT-2")):
+            for name, item_id, priority in (("alpha", "P-1", "LOW"), ("beta", "CT-2", "HIGH")):
                 workspace = root / name
                 workspace.mkdir()
                 (workspace / "registry.toml").write_text(
-                    f'[[item]]\nid = "{item_id}"\nkind = "project"\nstate = "ACTIVE"\npriority = "LOW"\n',
+                    f'[[item]]\nid = "{item_id}"\nkind = "project"\nstate = "ACTIVE"\npriority = "{priority}"\n',
                     encoding="utf-8",
                 )
                 workspaces.append(str(workspace))
@@ -96,7 +96,7 @@ class KitTests(unittest.TestCase):
             data = json.loads((output / "portfolio.json").read_text())
             self.assertEqual(data["workspaces"], ["alpha", "beta"])
             self.assertEqual(data["markers"], ["REVIEW"])
-            self.assertEqual([(item["workspace"], item["id"]) for item in data["items"]], [("alpha", "P-1"), ("beta", "CT-2")])
+            self.assertEqual([(item["workspace"], item["id"]) for item in data["items"]], [("beta", "CT-2"), ("alpha", "P-1")])
             self.assertIn("Portfolio context", (output / "portfolio.html").read_text())
 
     def test_portfolio_rejects_duplicate_workspace_names(self):
