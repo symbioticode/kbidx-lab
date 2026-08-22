@@ -96,7 +96,8 @@ For several projects, aggregate their refreshed contexts into one portfolio:
 ```bash
 python3 kit/portfolio.py examples/portfolio/team-alpha \
   examples/portfolio/team-beta \
-  --output portfolio-generated
+  --output portfolio-generated \
+  --exclude-dir node_modules
 ```
 
 The portfolio keeps each item's `workspace` origin and produces both JSON and

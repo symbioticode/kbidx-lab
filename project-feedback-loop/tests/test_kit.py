@@ -94,7 +94,7 @@ class KitTests(unittest.TestCase):
                 )
                 workspaces.append(str(workspace))
             output = root / "portfolio"
-            subprocess.run([sys.executable, str(ROOT / "kit/portfolio.py"), *workspaces, "--output", str(output), "--marker", "REVIEW"], check=True)
+            subprocess.run([sys.executable, str(ROOT / "kit/portfolio.py"), *workspaces, "--output", str(output), "--marker", "REVIEW", "--exclude-dir", "node_modules"], check=True)
             data = json.loads((output / "portfolio.json").read_text())
             self.assertEqual(data["workspaces"], ["alpha", "beta"])
             self.assertEqual(data["markers"], {"alpha": ["REVIEW"], "beta": ["REVIEW"]})
@@ -103,6 +103,19 @@ class KitTests(unittest.TestCase):
             self.assertTrue(all(item["workspace_observed_at"] != "unknown" for item in data["items"]))
             self.assertEqual([(item["workspace"], item["id"]) for item in data["items"]], [("beta", "CT-2"), ("alpha", "P-1")])
             self.assertIn("Portfolio context", (output / "portfolio.html").read_text())
+
+    def test_portfolio_forwards_excluded_directories(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            workspace = root / "alpha"
+            workspace.mkdir()
+            (workspace / "registry.toml").write_text('[[item]]\nid = "P-1"\nkind = "project"\nstate = "ACTIVE"\npriority = "LOW"\n', encoding="utf-8")
+            noisy = workspace / "node_modules"
+            noisy.mkdir()
+            (noisy / "dependency.md").write_text("TODO: ignored dependency\n", encoding="utf-8")
+            output = root / "portfolio"
+            subprocess.run([sys.executable, str(ROOT / "kit/portfolio.py"), str(workspace), "--output", str(output), "--exclude-dir", "node_modules"], check=True)
+            self.assertEqual(json.loads((output / "portfolio.json").read_text())["items"][0]["signal_count"], 0)
 
     def test_portfolio_rejects_duplicate_workspace_names(self):
         with tempfile.TemporaryDirectory() as directory:

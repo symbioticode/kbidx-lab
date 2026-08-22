@@ -18,6 +18,7 @@ def main() -> None:
     parser.add_argument("directories", nargs="+", type=Path, help="directories containing registry.toml")
     parser.add_argument("--output", type=Path, default=Path("portfolio-generated"))
     parser.add_argument("--marker", action="append", dest="markers", help="marker to pass to every workspace refresh")
+    parser.add_argument("--exclude-dir", action="append", default=[], help="directory name to skip in every workspace")
     args = parser.parse_args()
     workspace_names = [directory.name for directory in args.directories]
     if len(set(workspace_names)) != len(workspace_names):
@@ -29,6 +30,8 @@ def main() -> None:
         refresh_args = [sys.executable, str(ROOT / "refresh.py"), str(directory)]
         for marker in args.markers or []:
             refresh_args.extend(["--marker", marker])
+        for excluded_dir in args.exclude_dir:
+            refresh_args.extend(["--exclude-dir", excluded_dir])
         subprocess.run(refresh_args, check=True)
         context = directory / "generated/context.json"
         data = json.loads(context.read_text(encoding="utf-8"))
