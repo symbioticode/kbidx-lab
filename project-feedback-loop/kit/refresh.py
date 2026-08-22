@@ -4,6 +4,7 @@ import argparse
 import json
 import subprocess
 import sys
+from datetime import datetime, timezone
 from pathlib import Path
 
 
@@ -31,7 +32,7 @@ def main() -> None:
     machine_context.write_text(subprocess.run([sys.executable, str(ROOT / "render_context.py"), str(registry), "--format", "json"], check=True, capture_output=True, text=True).stdout, encoding="utf-8")
     manifest = output / "manifest.json"
     artifacts = (registry, observations, context, html_context, machine_context)
-    manifest.write_text(json.dumps({"schema_version": 1, "artifacts": [p.name for p in artifacts]}, indent=2) + "\n", encoding="utf-8")
+    manifest.write_text(json.dumps({"schema_version": 1, "generated_at": datetime.now(timezone.utc).isoformat(), "artifacts": [p.name for p in artifacts]}, indent=2) + "\n", encoding="utf-8")
     print(output)
 
 

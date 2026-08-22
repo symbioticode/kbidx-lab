@@ -2,6 +2,7 @@
 """Record heuristic signals without modifying the observed source corpus."""
 import argparse
 import json
+from datetime import datetime, timezone
 from pathlib import Path
 
 MARKERS = ("TODO", "FIXME", "PENDING", "blocked", "en attente")
@@ -27,7 +28,7 @@ def main():
     output = args.output or root / "observations.json"
     hits = observe(root, output.parent if output.parent != root else output)
     output.parent.mkdir(parents=True, exist_ok=True)
-    output.write_text(json.dumps({"schema_version": 1, "confidence": "heuristic", "signals": hits}, indent=2) + "\n", encoding="utf-8")
+    output.write_text(json.dumps({"schema_version": 1, "observed_at": datetime.now(timezone.utc).isoformat(), "confidence": "heuristic", "signals": hits}, indent=2) + "\n", encoding="utf-8")
     print(output)
 
 if __name__ == "__main__":

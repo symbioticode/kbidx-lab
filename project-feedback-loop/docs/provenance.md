@@ -10,3 +10,7 @@ source → observation → normalized record → projection → agent context
 
 The context is a navigation aid. It does not replace the source document or
 human review.
+
+The reference observer records `observed_at` in UTC, and `refresh.py` records
+`generated_at` in its manifest. These timestamps describe when the procedure
+ran; they do not certify that the source declaration was correct.

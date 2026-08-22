@@ -27,6 +27,8 @@ class KitTests(unittest.TestCase):
                 json.loads((generated / "manifest.json").read_text())["artifacts"],
                 ["registry.json", "observations.json", "context.txt", "context.html", "context.json"],
             )
+            self.assertIn("observed_at", json.loads((generated / "observations.json").read_text()))
+            self.assertIn("generated_at", json.loads((generated / "manifest.json").read_text()))
             self.assertIn("demo-project", (generated / "context.txt").read_text())
             self.assertIn("<table>", (generated / "context.html").read_text())
             self.assertEqual(json.loads((generated / "context.json").read_text())["schema_version"], 1)
@@ -41,6 +43,18 @@ class KitTests(unittest.TestCase):
             result = subprocess.run([sys.executable, str(ROOT / "kit/registry.py"), str(source)], capture_output=True, text=True)
             self.assertNotEqual(result.returncode, 0)
             self.assertIn("missing required field", result.stderr)
+
+    def test_registry_rejects_duplicate_ids(self):
+        with tempfile.TemporaryDirectory() as directory:
+            source = Path(directory) / "registry.toml"
+            source.write_text(
+                '[[item]]\nid = "same"\nkind = "project"\nstate = "ACTIVE"\npriority = "LOW"\n\n'
+                '[[item]]\nid = "same"\nkind = "project"\nstate = "ACTIVE"\npriority = "LOW"\n',
+                encoding="utf-8",
+            )
+            result = subprocess.run([sys.executable, str(ROOT / "kit/registry.py"), str(source)], capture_output=True, text=True)
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn("duplicate item id", result.stderr)
 
 if __name__ == "__main__":
     unittest.main()

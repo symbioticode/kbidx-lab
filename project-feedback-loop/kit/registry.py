@@ -13,6 +13,10 @@ def load_registry(source: Path) -> list[dict]:
     items = data.get("item", [])
     if not isinstance(items, list):
         raise ValueError("registry must contain one or more [[item]] tables")
+    identifiers = [item.get("id") for item in items]
+    duplicates = sorted({identifier for identifier in identifiers if identifiers.count(identifier) > 1})
+    if duplicates:
+        raise ValueError(f"duplicate item id(s): {', '.join(str(identifier) for identifier in duplicates)}")
     for index, item in enumerate(items, 1):
         missing = [field for field in REQUIRED if not item.get(field)]
         if missing:
