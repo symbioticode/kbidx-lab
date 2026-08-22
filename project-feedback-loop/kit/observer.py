@@ -7,10 +7,12 @@ from pathlib import Path
 
 DEFAULT_MARKERS = ("TODO", "FIXME", "PENDING", "blocked", "en attente")
 
-def observe(root: Path, excluded: Path | None = None, markers: tuple[str, ...] = DEFAULT_MARKERS) -> list[dict]:
+def observe(root: Path, excluded: Path | None = None, markers: tuple[str, ...] = DEFAULT_MARKERS, excluded_dirs: tuple[str, ...] = ()) -> list[dict]:
     hits = []
     for path in sorted(root.rglob("*")):
         if path.is_symlink():
+            continue
+        if any(part in excluded_dirs for part in path.parts):
             continue
         if excluded and (path == excluded or excluded in path.parents):
             continue
@@ -26,6 +28,7 @@ def main():
     parser.add_argument("directory", type=Path)
     parser.add_argument("--output", type=Path)
     parser.add_argument("--marker", action="append", dest="markers", help="marker to observe; repeat for multiple markers")
+    parser.add_argument("--exclude-dir", action="append", default=[], help="directory name to skip; repeat for multiple names")
     args = parser.parse_args()
     root = args.directory
     output = args.output or root / "observations.json"
@@ -35,7 +38,7 @@ def main():
         excluded = output
     elif output.parent.is_relative_to(root):
         excluded = output.parent
-    hits = observe(root, excluded, markers)
+    hits = observe(root, excluded, markers, tuple(args.exclude_dir))
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(json.dumps({"schema_version": 1, "observed_at": datetime.now(timezone.utc).isoformat(), "confidence": "heuristic", "markers": list(markers), "signals": hits}, indent=2) + "\n", encoding="utf-8")
     print(output)

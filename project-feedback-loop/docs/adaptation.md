@@ -16,6 +16,12 @@ Replace them for another workflow, for example:
 python kit/refresh.py examples/minimal --marker NEEDS-REVIEW --marker BLOCKED
 ```
 
+Noisy subtrees can be excluded by name:
+
+```text
+python kit/refresh.py examples/minimal --exclude-dir node_modules --exclude-dir .venv
+```
+
 The scheduler is replaceable. The repository provides systemd-user and Windows
 Task Scheduler examples; cron and GitHub Actions can use the same command
 contract. Every adapter should call the complete `kit/refresh.py` pipeline

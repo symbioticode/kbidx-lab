@@ -16,6 +16,7 @@ def main() -> None:
     parser.add_argument("directory", type=Path, help="directory containing registry.toml")
     parser.add_argument("--output", type=Path, help="generated output directory")
     parser.add_argument("--marker", action="append", dest="markers", help="marker to observe; repeat for multiple markers")
+    parser.add_argument("--exclude-dir", action="append", default=[], help="directory name to skip; repeat for multiple names")
     args = parser.parse_args()
     source = args.directory / "registry.toml"
     output = args.output or args.directory / "generated"
@@ -26,6 +27,8 @@ def main() -> None:
     observer_args = [sys.executable, str(ROOT / "observer.py"), str(args.directory), "--output", str(observations)]
     for marker in args.markers or []:
         observer_args.extend(["--marker", marker])
+    for excluded_dir in args.exclude_dir:
+        observer_args.extend(["--exclude-dir", excluded_dir])
     subprocess.run(observer_args, check=True)
     context = output / "context.txt"
     render_args = [sys.executable, str(ROOT / "render_context.py"), str(registry), "--observations", str(observations)]

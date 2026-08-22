@@ -192,5 +192,16 @@ class KitTests(unittest.TestCase):
             signals = json.loads((output / "observations.json").read_text())["signals"]
             self.assertEqual(len(signals), 1)
 
+    def test_excluded_directory_is_not_observed(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "registry.toml").write_text((ROOT / "examples/minimal/registry.toml").read_text(), encoding="utf-8")
+            ignored = root / "node_modules"
+            ignored.mkdir()
+            (ignored / "dependency.md").write_text("TODO: third-party marker\n", encoding="utf-8")
+            subprocess.run([sys.executable, str(ROOT / "kit/refresh.py"), str(root), "--exclude-dir", "node_modules"], check=True)
+            signals = json.loads((root / "generated/observations.json").read_text())["signals"]
+            self.assertEqual(signals, [])
+
 if __name__ == "__main__":
     unittest.main()
