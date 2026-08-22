@@ -325,6 +325,18 @@ class KitTests(unittest.TestCase):
             signals = json.loads(output.read_text())["signals"]
             self.assertEqual(len(signals), 1)
 
+    def test_spaces_and_external_workspace_output(self):
+        with tempfile.TemporaryDirectory(prefix="feedback loop ") as directory:
+            root = Path(directory)
+            workspace = root / "source corpus"
+            workspace.mkdir()
+            (workspace / "registry.toml").write_text((ROOT / "examples/minimal/registry.toml").read_text(), encoding="utf-8")
+            output_root = root / "derived views"
+            portfolio_output = root / "portfolio view"
+            subprocess.run([sys.executable, str(ROOT / "kit/portfolio.py"), str(workspace), "--workspace-output-root", str(output_root), "--output", str(portfolio_output)], check=True)
+            self.assertTrue((output_root / "source corpus/manifest.json").exists())
+            self.assertEqual(json.loads((portfolio_output / "manifest.json").read_text())["workspaces"], ["source corpus"])
+
     def test_excluded_directory_is_not_observed(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
