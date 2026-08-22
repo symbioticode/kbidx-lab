@@ -26,3 +26,7 @@ the projection marks the match `ambiguous` and assigns zero item-level signals;
 this avoids false certainty.
 Items without a declared source are marked `none` and likewise receive no
 item-level signal count.
+
+The portfolio projection preserves each workspace's observation timestamp in
+`observed_at` and `workspace_observed_at`; it does not pretend that all
+workspaces were observed simultaneously.

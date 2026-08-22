@@ -22,6 +22,7 @@ def main() -> None:
     if len(set(workspace_names)) != len(workspace_names):
         parser.error("workspace directory names must be unique")
     items = []
+    observed_at = {}
     for directory in args.directories:
         refresh_args = [sys.executable, str(ROOT / "refresh.py"), str(directory)]
         for marker in args.markers or []:
@@ -29,19 +30,21 @@ def main() -> None:
         subprocess.run(refresh_args, check=True)
         context = directory / "generated/context.json"
         data = json.loads(context.read_text(encoding="utf-8"))
+        observed_at[directory.name] = data.get("observed_at", "unknown")
         for item in data.get("items", []):
             copy = dict(item)
             copy["workspace"] = directory.name
+            copy["workspace_observed_at"] = observed_at[directory.name]
             items.append(copy)
     items.sort(key=lambda item: (PRIORITY_ORDER.get(str(item.get("priority", "")).upper(), 3), str(item.get("workspace", "")), str(item.get("id", ""))))
     args.output.mkdir(parents=True, exist_ok=True)
-    payload = {"schema_version": 1, "workspaces": workspace_names, "markers": args.markers, "items": items}
+    payload = {"schema_version": 1, "workspaces": workspace_names, "markers": args.markers, "observed_at": observed_at, "items": items}
     (args.output / "portfolio.json").write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     rows = "".join(
-        "<tr>" + "".join(f"<td>{html.escape(str(item.get(field, '')))}</td>" for field in ("workspace", "id", "kind", "state", "priority", "signal_count")) + "</tr>"
+        "<tr>" + "".join(f"<td>{html.escape(str(item.get(field, '')))}</td>" for field in ("workspace", "id", "kind", "state", "priority", "signal_count", "workspace_observed_at")) + "</tr>"
         for item in items
     )
-    table = "<!doctype html>\n<h1>Portfolio context</h1><table><thead><tr><th>Workspace</th><th>ID</th><th>Kind</th><th>State</th><th>Priority</th><th>Signals</th></tr></thead><tbody>" + rows + "</tbody></table>\n"
+    table = "<!doctype html>\n<h1>Portfolio context</h1><table><thead><tr><th>Workspace</th><th>ID</th><th>Kind</th><th>State</th><th>Priority</th><th>Signals</th><th>Observed at</th></tr></thead><tbody>" + rows + "</tbody></table>\n"
     (args.output / "portfolio.html").write_text(table, encoding="utf-8")
     print(args.output)
 
