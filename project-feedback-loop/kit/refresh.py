@@ -24,12 +24,13 @@ def main() -> None:
     subprocess.run([sys.executable, str(ROOT / "registry.py"), str(source), "--output", str(registry)], check=True)
     subprocess.run([sys.executable, str(ROOT / "observer.py"), str(args.directory), "--output", str(observations)], check=True)
     context = output / "context.txt"
-    rendered = subprocess.run([sys.executable, str(ROOT / "render_context.py"), str(registry)], check=True, capture_output=True, text=True)
+    render_args = [sys.executable, str(ROOT / "render_context.py"), str(registry), "--observations", str(observations)]
+    rendered = subprocess.run(render_args, check=True, capture_output=True, text=True)
     context.write_text(rendered.stdout, encoding="utf-8")
     html_context = output / "context.html"
-    html_context.write_text(subprocess.run([sys.executable, str(ROOT / "render_context.py"), str(registry), "--format", "html"], check=True, capture_output=True, text=True).stdout, encoding="utf-8")
+    html_context.write_text(subprocess.run(render_args + ["--format", "html"], check=True, capture_output=True, text=True).stdout, encoding="utf-8")
     machine_context = output / "context.json"
-    machine_context.write_text(subprocess.run([sys.executable, str(ROOT / "render_context.py"), str(registry), "--format", "json"], check=True, capture_output=True, text=True).stdout, encoding="utf-8")
+    machine_context.write_text(subprocess.run(render_args + ["--format", "json"], check=True, capture_output=True, text=True).stdout, encoding="utf-8")
     manifest = output / "manifest.json"
     artifacts = (registry, observations, context, html_context, machine_context)
     manifest.write_text(json.dumps({"schema_version": 1, "generated_at": datetime.now(timezone.utc).isoformat(), "artifacts": [p.name for p in artifacts]}, indent=2) + "\n", encoding="utf-8")

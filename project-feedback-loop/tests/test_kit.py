@@ -19,6 +19,7 @@ class KitTests(unittest.TestCase):
             fixture = ROOT / "examples/minimal/registry.toml"
             (root / "registry.toml").write_text(fixture.read_text(), encoding="utf-8")
             (root / "notes.md").write_text("TODO: review this item\n", encoding="utf-8")
+            (root / "STATUS.md").write_text("TODO: update deployment state\n", encoding="utf-8")
             (root / "generated").mkdir()
             (root / "generated" / "old.txt").write_text("PENDING: stale derived output\n", encoding="utf-8")
             subprocess.run([sys.executable, str(ROOT / "kit/refresh.py"), str(root)], check=True)
@@ -30,11 +31,15 @@ class KitTests(unittest.TestCase):
             self.assertIn("observed_at", json.loads((generated / "observations.json").read_text()))
             self.assertIn("generated_at", json.loads((generated / "manifest.json").read_text()))
             self.assertIn("demo-project", (generated / "context.txt").read_text())
+            self.assertIn("observations: 2", (generated / "context.txt").read_text())
+            self.assertIn("demo-project | project | ACTIVE | priority=HIGH | signals=1", (generated / "context.txt").read_text())
             self.assertIn("<table>", (generated / "context.html").read_text())
-            self.assertEqual(json.loads((generated / "context.json").read_text())["schema_version"], 1)
+            machine = json.loads((generated / "context.json").read_text())
+            self.assertEqual(machine["schema_version"], 1)
+            self.assertEqual(machine["observation_count"], 2)
             signals = json.loads((generated / "observations.json").read_text())["signals"]
-            self.assertEqual(len(signals), 1)
-            self.assertEqual(signals[0]["source"], str(root / "notes.md"))
+            self.assertEqual(len(signals), 2)
+            self.assertEqual({signal["source"] for signal in signals}, {str(root / "notes.md"), str(root / "STATUS.md")})
 
     def test_registry_rejects_missing_lifecycle_fields(self):
         with tempfile.TemporaryDirectory() as directory:
