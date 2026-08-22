@@ -1,0 +1,6 @@
+[[item]]
+id = "CT-2026-015"
+kind = "change_ticket"
+state = "PROPOSED"
+priority = "MEDIUM"
+source = "change-ticket.md"

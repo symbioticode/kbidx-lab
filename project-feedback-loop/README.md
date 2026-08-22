@@ -86,8 +86,9 @@ needs separate stages.
 For several projects, aggregate their refreshed contexts into one portfolio:
 
 ```bash
-python3 kit/portfolio.py examples/project-a examples/project-b \
-  --output portfolio-generated --marker NEEDS-REVIEW
+python3 kit/portfolio.py examples/portfolio/team-alpha \
+  examples/portfolio/team-beta \
+  --output portfolio-generated
 ```
 
 The portfolio keeps each item's `workspace` origin and produces both JSON and

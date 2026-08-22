@@ -1,0 +1,6 @@
+[[item]]
+id = "ALPHA-001"
+kind = "project"
+state = "ACTIVE"
+priority = "HIGH"
+source = "STATUS.md"

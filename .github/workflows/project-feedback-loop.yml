@@ -28,3 +28,5 @@ jobs:
         run: python -m unittest discover -s tests -v
       - name: Run example refresh
         run: python kit/refresh.py examples/minimal
+      - name: Run portfolio example
+        run: python kit/portfolio.py examples/portfolio/team-alpha examples/portfolio/team-beta --output portfolio-generated
