@@ -10,6 +10,9 @@ on:
       - "project-feedback-loop/**"
       - ".github/workflows/project-feedback-loop.yml"
 
+permissions:
+  contents: read
+
 jobs:
   test:
     runs-on: ubuntu-latest
