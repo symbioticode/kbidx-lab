@@ -169,5 +169,15 @@ class KitTests(unittest.TestCase):
             observations = json.loads((root / "generated/observations.json").read_text())
             self.assertEqual(observations["markers"], ["REVISER"])
 
+    def test_external_output_does_not_exclude_source_corpus(self):
+        with tempfile.TemporaryDirectory() as directory, tempfile.TemporaryDirectory() as output_directory:
+            root = Path(directory)
+            (root / "registry.toml").write_text((ROOT / "examples/minimal/registry.toml").read_text(), encoding="utf-8")
+            (root / "STATUS.md").write_text("TODO: source signal\n", encoding="utf-8")
+            output = Path(output_directory) / "generated"
+            subprocess.run([sys.executable, str(ROOT / "kit/refresh.py"), str(root), "--output", str(output)], check=True)
+            signals = json.loads((output / "observations.json").read_text())["signals"]
+            self.assertEqual(len(signals), 1)
+
 if __name__ == "__main__":
     unittest.main()
