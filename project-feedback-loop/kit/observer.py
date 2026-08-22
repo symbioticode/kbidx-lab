@@ -34,10 +34,12 @@ def main():
     output = args.output or root / "observations.json"
     markers = tuple(args.markers) if args.markers else DEFAULT_MARKERS
     excluded = None
-    if output.parent == root:
-        excluded = output
-    elif output.parent.is_relative_to(root):
-        excluded = output.parent
+    resolved_root = root.resolve()
+    resolved_output = output.resolve()
+    if resolved_output.parent == resolved_root:
+        excluded = root / output.name
+    elif resolved_output.parent.is_relative_to(resolved_root):
+        excluded = root / resolved_output.parent.relative_to(resolved_root)
     hits = observe(root, excluded, markers, tuple(args.exclude_dir))
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(json.dumps({"schema_version": 1, "observed_at": datetime.now(timezone.utc).isoformat(), "confidence": "heuristic", "markers": list(markers), "excluded_dirs": list(args.exclude_dir), "signals": hits}, indent=2) + "\n", encoding="utf-8")

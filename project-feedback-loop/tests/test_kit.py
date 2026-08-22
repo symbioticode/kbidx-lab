@@ -254,6 +254,17 @@ class KitTests(unittest.TestCase):
             signals = json.loads((output / "observations.json").read_text())["signals"]
             self.assertEqual(len(signals), 1)
 
+    def test_absolute_output_is_excluded_when_source_is_relative(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "registry.toml").write_text((ROOT / "examples/minimal/registry.toml").read_text(), encoding="utf-8")
+            (root / "STATUS.md").write_text("TODO: source signal\n", encoding="utf-8")
+            output = root / "generated" / "observations.json"
+            result = subprocess.run([sys.executable, str(ROOT / "kit/observer.py"), ".", "--output", str(output.resolve())], cwd=root, capture_output=True, text=True)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            signals = json.loads(output.read_text())["signals"]
+            self.assertEqual(len(signals), 1)
+
     def test_excluded_directory_is_not_observed(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
