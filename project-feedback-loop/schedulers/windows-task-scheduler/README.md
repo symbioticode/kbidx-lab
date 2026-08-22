@@ -15,4 +15,6 @@ pwsh -File .\schedulers\windows-task-scheduler\refresh.ps1 `
 ```
 
 The wrapper keeps the same command contract and is intended for Windows Task
-Scheduler.
+Scheduler. It also fails if the refresh does not leave
+`examples/minimal/generated/manifest.json`; the manifest is the completion
+marker for the generated output set.
