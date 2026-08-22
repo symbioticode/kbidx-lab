@@ -9,6 +9,13 @@ source directory. It skips generated output and symbolic links, so an adapter
 that intentionally traverses external sources should make that boundary
 explicit and test it.
 
+The default markers are `TODO`, `FIXME`, `PENDING`, `blocked`, and `en attente`.
+Replace them for another workflow, for example:
+
+```text
+python kit/refresh.py examples/minimal --marker NEEDS-REVIEW --marker BLOCKED
+```
+
 The scheduler is replaceable. See `schedulers/` for systemd-user, cron,
 Windows Task Scheduler, and GitHub Actions examples. Every adapter should call
 the complete `kit/refresh.py` pipeline rather than only rendering a previously

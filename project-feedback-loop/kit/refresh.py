@@ -15,6 +15,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("directory", type=Path, help="directory containing registry.toml")
     parser.add_argument("--output", type=Path, help="generated output directory")
+    parser.add_argument("--marker", action="append", dest="markers", help="marker to observe; repeat for multiple markers")
     args = parser.parse_args()
     source = args.directory / "registry.toml"
     output = args.output or args.directory / "generated"
@@ -22,7 +23,10 @@ def main() -> None:
     registry = output / "registry.json"
     observations = output / "observations.json"
     subprocess.run([sys.executable, str(ROOT / "registry.py"), str(source), "--output", str(registry)], check=True)
-    subprocess.run([sys.executable, str(ROOT / "observer.py"), str(args.directory), "--output", str(observations)], check=True)
+    observer_args = [sys.executable, str(ROOT / "observer.py"), str(args.directory), "--output", str(observations)]
+    for marker in args.markers or []:
+        observer_args.extend(["--marker", marker])
+    subprocess.run(observer_args, check=True)
     context = output / "context.txt"
     render_args = [sys.executable, str(ROOT / "render_context.py"), str(registry), "--observations", str(observations)]
     rendered = subprocess.run(render_args, check=True, capture_output=True, text=True)

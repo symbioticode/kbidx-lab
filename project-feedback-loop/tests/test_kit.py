@@ -92,5 +92,15 @@ class KitTests(unittest.TestCase):
                 self.assertEqual(observations["signals"], [])
                 self.assertEqual(result.stdout.strip(), str(root / "observations.json"))
 
+    def test_custom_marker_replaces_defaults(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "registry.toml").write_text((ROOT / "examples/minimal/registry.toml").read_text(), encoding="utf-8")
+            (root / "notes.md").write_text("A REVISER signal\nTODO is deliberately ignored\n", encoding="utf-8")
+            subprocess.run([sys.executable, str(ROOT / "kit/refresh.py"), str(root), "--marker", "REVISER"], check=True)
+            signals = json.loads((root / "generated/observations.json").read_text())["signals"]
+            self.assertEqual(len(signals), 1)
+            self.assertIn("REVISER", signals[0]["signal"])
+
 if __name__ == "__main__":
     unittest.main()
