@@ -23,3 +23,9 @@ if ($LASTEXITCODE -ne 0) {
 if (-not (Test-Path -LiteralPath $manifest -PathType Leaf)) {
     throw "Refresh completed without a manifest: $manifest"
 }
+$manifestData = Get-Content -LiteralPath $manifest -Raw | ConvertFrom-Json
+$expectedArtifacts = @("registry.json", "observations.json", "context.txt", "context.html", "context.json")
+if ($manifestData.artifacts.Count -ne $expectedArtifacts.Count -or
+    ((@($manifestData.artifacts) -join "|") -cne ($expectedArtifacts -join "|"))) {
+    throw "Refresh manifest is incomplete or invalid: $manifest"
+}
