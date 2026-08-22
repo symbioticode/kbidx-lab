@@ -17,6 +17,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("directories", nargs="+", type=Path, help="directories containing registry.toml")
     parser.add_argument("--output", type=Path, default=Path("portfolio-generated"))
+    parser.add_argument("--workspace-output-root", type=Path, help="root for per-workspace derived outputs")
     parser.add_argument("--marker", action="append", dest="markers", help="marker to pass to every workspace refresh")
     parser.add_argument("--exclude-dir", action="append", default=[], help="directory name to skip in every workspace")
     args = parser.parse_args()
@@ -28,13 +29,14 @@ def main() -> None:
     markers_by_workspace = {}
     excluded_dirs_by_workspace = {}
     for directory in args.directories:
-        refresh_args = [sys.executable, str(ROOT / "refresh.py"), str(directory)]
+        workspace_output = (args.workspace_output_root / directory.name) if args.workspace_output_root else directory / "generated"
+        refresh_args = [sys.executable, str(ROOT / "refresh.py"), str(directory), "--output", str(workspace_output)]
         for marker in args.markers or []:
             refresh_args.extend(["--marker", marker])
         for excluded_dir in args.exclude_dir:
             refresh_args.extend(["--exclude-dir", excluded_dir])
         subprocess.run(refresh_args, check=True)
-        context = directory / "generated/context.json"
+        context = workspace_output / "context.json"
         data = json.loads(context.read_text(encoding="utf-8"))
         observed_at[directory.name] = data.get("observed_at", "unknown")
         markers_by_workspace[directory.name] = data.get("markers", [])

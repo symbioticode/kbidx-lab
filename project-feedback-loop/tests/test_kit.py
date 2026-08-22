@@ -119,6 +119,18 @@ class KitTests(unittest.TestCase):
             self.assertEqual(data["items"][0]["signal_count"], 0)
             self.assertEqual(data["excluded_dirs"]["alpha"], ["node_modules"])
 
+    def test_portfolio_can_keep_workspace_outputs_external(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            workspace = root / "alpha"
+            workspace.mkdir()
+            (workspace / "registry.toml").write_text('[[item]]\nid = "P-1"\nkind = "project"\nstate = "ACTIVE"\npriority = "LOW"\n', encoding="utf-8")
+            output_root = root / "workspace-outputs"
+            portfolio_output = root / "portfolio"
+            subprocess.run([sys.executable, str(ROOT / "kit/portfolio.py"), str(workspace), "--workspace-output-root", str(output_root), "--output", str(portfolio_output)], check=True)
+            self.assertTrue((output_root / "alpha/context.json").exists())
+            self.assertFalse((workspace / "generated").exists())
+
     def test_portfolio_rejects_duplicate_workspace_names(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

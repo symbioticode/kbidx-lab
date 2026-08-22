@@ -34,6 +34,10 @@ The portfolio is a snapshot, not a live database. Compare the per-workspace
 `observed_at` values before treating its rows as simultaneous. A row with
 `source_match=ambiguous` or `source_match=none` needs a declaration review.
 
+By default, each workspace receives a `generated/` directory. Use
+`--workspace-output-root` when the source workspaces must remain untouched or
+are mounted read-only.
+
 ## Scheduling
 
 Schedule the complete `refresh.py` command, not a renderer alone. The supplied

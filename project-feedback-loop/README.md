@@ -100,6 +100,15 @@ python3 kit/portfolio.py examples/portfolio/team-alpha \
   --exclude-dir node_modules
 ```
 
+For read-only source workspaces, keep their derived files elsewhere:
+
+```bash
+python3 kit/portfolio.py examples/portfolio/team-alpha \
+  examples/portfolio/team-beta \
+  --workspace-output-root /tmp/feedback-workspaces \
+  --output portfolio-generated
+```
+
 The portfolio keeps each item's `workspace` origin and produces both JSON and
 HTML views. Its default ordering puts high-priority work first, followed by
 medium, low, and unknown priorities.
