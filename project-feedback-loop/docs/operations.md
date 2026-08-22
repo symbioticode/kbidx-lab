@@ -33,6 +33,9 @@ python3 kit/portfolio.py \
 The portfolio is a snapshot, not a live database. Compare the per-workspace
 `observed_at` values before treating its rows as simultaneous. A row with
 `source_match=ambiguous` or `source_match=none` needs a declaration review.
+The portfolio output also contains `manifest.json`, which lists the complete
+portfolio artifacts and generation time; consumers can use it as the completion
+marker for a scheduled run.
 
 By default, each workspace receives a `generated/` directory. Use
 `--workspace-output-root` when the source workspaces must remain untouched or

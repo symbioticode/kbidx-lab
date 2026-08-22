@@ -112,6 +112,9 @@ class KitTests(unittest.TestCase):
             self.assertIn("Workspaces: alpha, beta", rendered)
             self.assertIn("Markers: alpha: REVIEW; beta: REVIEW", rendered)
             self.assertIn("Excluded directories: alpha: node_modules; beta: node_modules", rendered)
+            manifest = json.loads((output / "manifest.json").read_text())
+            self.assertEqual(manifest["artifacts"], ["portfolio.json", "portfolio.html"])
+            self.assertEqual(manifest["workspaces"], ["alpha", "beta"])
 
     def test_portfolio_forwards_excluded_directories(self):
         with tempfile.TemporaryDirectory() as directory:
