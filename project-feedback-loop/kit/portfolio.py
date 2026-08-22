@@ -44,10 +44,10 @@ def main() -> None:
     payload = {"schema_version": 1, "generated_at": datetime.now(timezone.utc).isoformat(), "workspaces": workspace_names, "markers": markers_by_workspace, "observed_at": observed_at, "items": items}
     (args.output / "portfolio.json").write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     rows = "".join(
-        "<tr>" + "".join(f"<td>{html.escape(str(item.get(field, '')))}</td>" for field in ("workspace", "id", "kind", "state", "priority", "signal_count", "workspace_observed_at")) + "</tr>"
+        "<tr>" + "".join(f"<td>{html.escape(str(item.get(field, '')))}</td>" for field in ("workspace", "id", "kind", "state", "priority", "source", "source_match", "signal_count", "workspace_observed_at")) + "</tr>"
         for item in items
     )
-    table = "<!doctype html>\n<meta charset=\"utf-8\"><style>body{font:1rem system-ui,sans-serif;line-height:1.4;margin:2rem;color:#17202a}table{border-collapse:collapse;width:100%;max-width:90rem}caption{text-align:left;font-size:1.4rem;font-weight:700;margin-bottom:.5rem}th,td{border:1px solid #ccd;padding:.5rem;text-align:left}th{background:#eef2f5}tr:nth-child(even){background:#f8fafb}@media(max-width:40rem){body{margin:.75rem}table{font-size:.85rem;display:block;overflow-x:auto;white-space:nowrap}}</style><h1>Portfolio context</h1><table><caption>Tracked units by workspace</caption><thead><tr><th>Workspace</th><th>ID</th><th>Kind</th><th>State</th><th>Priority</th><th>Signals</th><th>Observed at</th></tr></thead><tbody>" + rows + "</tbody></table>\n"
+    table = "<!doctype html>\n<meta charset=\"utf-8\"><style>body{font:1rem system-ui,sans-serif;line-height:1.4;margin:2rem;color:#17202a}table{border-collapse:collapse;width:100%;max-width:110rem}caption{text-align:left;font-size:1.4rem;font-weight:700;margin-bottom:.5rem}th,td{border:1px solid #ccd;padding:.5rem;text-align:left}th{background:#eef2f5}tr:nth-child(even){background:#f8fafb}@media(max-width:40rem){body{margin:.75rem}table{font-size:.85rem;display:block;overflow-x:auto;white-space:nowrap}}</style><h1>Portfolio context</h1><table><caption>Tracked units by workspace</caption><thead><tr><th>Workspace</th><th>ID</th><th>Kind</th><th>State</th><th>Priority</th><th>Source</th><th>Match</th><th>Signals</th><th>Observed at</th></tr></thead><tbody>" + rows + "</tbody></table>\n"
     (args.output / "portfolio.html").write_text(table, encoding="utf-8")
     print(args.output)
 

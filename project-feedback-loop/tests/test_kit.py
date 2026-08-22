@@ -34,6 +34,8 @@ class KitTests(unittest.TestCase):
             self.assertIn("observations: 2 | observed_at:", (generated / "context.txt").read_text())
             self.assertIn("demo-project | project | ACTIVE | priority=HIGH | signals=1", (generated / "context.txt").read_text())
             self.assertIn("<table>", (generated / "context.html").read_text())
+            self.assertIn("<th>Match</th>", (generated / "context.html").read_text())
+            self.assertIn("source_match", (generated / "context.json").read_text())
             machine = json.loads((generated / "context.json").read_text())
             self.assertEqual(machine["schema_version"], 1)
             self.assertEqual(machine["observation_count"], 2)
