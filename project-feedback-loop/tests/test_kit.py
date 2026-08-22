@@ -79,6 +79,25 @@ class KitTests(unittest.TestCase):
             self.assertNotEqual(result.returncode, 0)
             self.assertIn("missing required field", result.stderr)
 
+    def test_portfolio_preserves_workspace_origin(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            workspaces = []
+            for name, item_id in (("alpha", "P-1"), ("beta", "CT-2")):
+                workspace = root / name
+                workspace.mkdir()
+                (workspace / "registry.toml").write_text(
+                    f'[[item]]\nid = "{item_id}"\nkind = "project"\nstate = "ACTIVE"\npriority = "LOW"\n',
+                    encoding="utf-8",
+                )
+                workspaces.append(str(workspace))
+            output = root / "portfolio"
+            subprocess.run([sys.executable, str(ROOT / "kit/portfolio.py"), *workspaces, "--output", str(output)], check=True)
+            data = json.loads((output / "portfolio.json").read_text())
+            self.assertEqual(data["workspaces"], ["alpha", "beta"])
+            self.assertEqual([(item["workspace"], item["id"]) for item in data["items"]], [("alpha", "P-1"), ("beta", "CT-2")])
+            self.assertIn("Portfolio context", (output / "portfolio.html").read_text())
+
     def test_ambiguous_source_is_not_assigned(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

@@ -82,6 +82,16 @@ small and replaceable. Adapt the source paths, states, scheduler, and dashboard
 to your environment. The individual scripts remain available when a deployment
 needs separate stages.
 
+For several projects, aggregate their refreshed contexts into one portfolio:
+
+```bash
+python3 kit/portfolio.py examples/project-a examples/project-b \
+  --output portfolio-generated
+```
+
+The portfolio keeps each item's `workspace` origin and produces both JSON and
+HTML views.
+
 The minimal fixture includes three source files. Run the command and inspect
 `generated/context.html` to see the project and change-ticket signals linked
 to their declared sources; the knowledge article remains signal-free.
