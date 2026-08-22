@@ -2,7 +2,6 @@
 """Convert and validate the small TOML registry into deterministic JSON."""
 import argparse
 import json
-import sys
 import tomllib
 from pathlib import Path
 
