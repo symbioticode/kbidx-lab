@@ -115,7 +115,9 @@ class KitTests(unittest.TestCase):
             (noisy / "dependency.md").write_text("TODO: ignored dependency\n", encoding="utf-8")
             output = root / "portfolio"
             subprocess.run([sys.executable, str(ROOT / "kit/portfolio.py"), str(workspace), "--output", str(output), "--exclude-dir", "node_modules"], check=True)
-            self.assertEqual(json.loads((output / "portfolio.json").read_text())["items"][0]["signal_count"], 0)
+            data = json.loads((output / "portfolio.json").read_text())
+            self.assertEqual(data["items"][0]["signal_count"], 0)
+            self.assertEqual(data["excluded_dirs"]["alpha"], ["node_modules"])
 
     def test_portfolio_rejects_duplicate_workspace_names(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -213,8 +215,10 @@ class KitTests(unittest.TestCase):
             ignored.mkdir()
             (ignored / "dependency.md").write_text("TODO: third-party marker\n", encoding="utf-8")
             subprocess.run([sys.executable, str(ROOT / "kit/refresh.py"), str(root), "--exclude-dir", "node_modules"], check=True)
-            signals = json.loads((root / "generated/observations.json").read_text())["signals"]
+            observations = json.loads((root / "generated/observations.json").read_text())
+            signals = observations["signals"]
             self.assertEqual(signals, [])
+            self.assertEqual(observations["excluded_dirs"], ["node_modules"])
 
 if __name__ == "__main__":
     unittest.main()

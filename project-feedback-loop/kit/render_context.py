@@ -54,11 +54,12 @@ def main():
     signals = observations.get("signals", [])
     observed_at = str(observations.get("observed_at", "unknown"))
     markers = observations.get("markers", [])
+    excluded_dirs = observations.get("excluded_dirs", [])
     items = enrich(data.get("items", []), signals)
     if args.format == "html":
         print(render_html(items, len(signals), observed_at, markers), end="")
     elif args.format == "json":
-        print(json.dumps({"schema_version": data.get("schema_version", 1), "observation_count": len(signals), "observed_at": observed_at, "markers": markers, "items": items}, indent=2, sort_keys=True))
+        print(json.dumps({"schema_version": data.get("schema_version", 1), "observation_count": len(signals), "observed_at": observed_at, "markers": markers, "excluded_dirs": excluded_dirs, "items": items}, indent=2, sort_keys=True))
     else:
         print(render_text(items, len(signals), observed_at), end="")
 

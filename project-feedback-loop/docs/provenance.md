@@ -32,3 +32,5 @@ The portfolio projection preserves each workspace's observation timestamp in
 workspaces were observed simultaneously.
 It also records the effective marker list per workspace and its own
 `generated_at` timestamp.
+The effective excluded-directory list is preserved as well, so consumers can
+distinguish “no signal found” from “this subtree was not inspected.”
