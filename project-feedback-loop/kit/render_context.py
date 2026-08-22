@@ -5,27 +5,34 @@ import html
 import json
 from pathlib import Path
 
+def normalized_source(value: object) -> str:
+    return str(value).replace("\\", "/").lstrip("./")
+
+
+def source_matches(declared: str, observed: str) -> bool:
+    declared_normalized = normalized_source(declared)
+    observed_normalized = normalized_source(observed)
+    if "/" not in declared_normalized:
+        return Path(declared_normalized).name == Path(observed_normalized).name
+    return observed_normalized == declared_normalized or observed_normalized.endswith("/" + declared_normalized)
+
+
 def enrich(items: list[dict], signals: list[dict]) -> list[dict]:
-    by_name: dict[str, int] = {}
-    signal_sources_by_name: dict[str, set[str]] = {}
-    for signal in signals:
-        raw_source = str(signal.get("source", ""))
-        name = Path(raw_source).name
-        by_name[name] = by_name.get(name, 0) + 1
-        signal_sources_by_name.setdefault(name, set()).add(raw_source)
     declared: dict[str, int] = {}
     for item in items:
         raw_source = item.get("source")
         if raw_source:
-            source = Path(str(raw_source)).name
+            source = normalized_source(raw_source)
             declared[source] = declared.get(source, 0) + 1
     enriched = []
     for item in items:
         copy = dict(item)
         raw_source = item.get("source")
-        source = Path(str(raw_source)).name if raw_source else ""
-        source_is_ambiguous = len(signal_sources_by_name.get(source, set())) > 1
-        copy["signal_count"] = by_name.get(source, 0) if source and declared.get(source) == 1 and not source_is_ambiguous else 0
+        source = normalized_source(raw_source) if raw_source else ""
+        matching_signals = [signal for signal in signals if source and source_matches(source, str(signal.get("source", "")))]
+        matching_paths = {normalized_source(signal.get("source", "")) for signal in matching_signals}
+        source_is_ambiguous = "/" not in source and len(matching_paths) > 1
+        copy["signal_count"] = len(matching_signals) if source and declared.get(source) == 1 and not source_is_ambiguous else 0
         copy["source_match"] = "unique" if source and declared.get(source) == 1 and not source_is_ambiguous else ("ambiguous" if source else "none")
         enriched.append(copy)
     return enriched

@@ -36,8 +36,8 @@ The renderer matches declarations by basename so that a portable declaration
 such as `STATUS.md` works across checkouts. If observed signals come from more
 than one distinct path with that basename, the result is marked
 `source_match=ambiguous` and no signal is assigned. Deployments needing
-stronger provenance should use unique source names or replace the renderer with
-a path-aware adapter.
+stronger provenance can declare a relative path such as `docs/STATUS.md`; the
+renderer then matches that path suffix instead of falling back to the basename.
 
 ## Common kinds
 

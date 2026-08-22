@@ -175,6 +175,24 @@ class KitTests(unittest.TestCase):
             self.assertEqual(item["signal_count"], 0)
             self.assertEqual(item["source_match"], "ambiguous")
 
+    def test_relative_source_path_disambiguates_same_basenames(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            registry = root / "registry.json"
+            registry.write_text(json.dumps({"schema_version": 1, "items": [
+                {"id": "one", "kind": "project", "state": "ACTIVE", "priority": "LOW", "source": "alpha/STATUS.md"},
+                {"id": "two", "kind": "project", "state": "ACTIVE", "priority": "LOW", "source": "beta/STATUS.md"},
+            ]}), encoding="utf-8")
+            observations = root / "observations.json"
+            observations.write_text(json.dumps({"signals": [
+                {"source": str(root / "alpha" / "STATUS.md")},
+                {"source": str(root / "alpha" / "STATUS.md")},
+                {"source": str(root / "beta" / "STATUS.md")},
+            ]}), encoding="utf-8")
+            result = subprocess.run([sys.executable, str(ROOT / "kit/render_context.py"), str(registry), "--observations", str(observations), "--format", "json"], check=True, capture_output=True, text=True)
+            items = json.loads(result.stdout)["items"]
+            self.assertEqual([(item["id"], item["signal_count"], item["source_match"]) for item in items], [("one", 2, "unique"), ("two", 1, "unique")])
+
     def test_missing_source_is_explicitly_unmatched(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
