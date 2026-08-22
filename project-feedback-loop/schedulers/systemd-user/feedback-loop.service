@@ -4,4 +4,4 @@ Description=Refresh the local project feedback context
 [Service]
 Type=oneshot
 WorkingDirectory=%h/project-feedback-loop
-ExecStart=/usr/bin/python3 kit/render_context.py examples/minimal/registry.json
+ExecStart=/usr/bin/python3 kit/refresh.py examples/minimal

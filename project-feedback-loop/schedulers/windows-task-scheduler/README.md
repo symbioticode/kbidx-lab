@@ -3,9 +3,16 @@
 Create a daily task that runs from the repository root:
 
 ```powershell
-py .\kit\registry.py .\examples\minimal\registry.toml
-py .\kit\render_context.py .\examples\minimal\registry.json
+py .\kit\refresh.py .\examples\minimal
 ```
 
-Use the user's actual repository path and Python launcher. Contributions that
-provide an importable XML task definition or a PowerShell wrapper are welcome.
+Use the user's actual repository path and Python launcher. A reusable wrapper is
+provided in [`refresh.ps1`](refresh.ps1):
+
+```powershell
+pwsh -File .\schedulers\windows-task-scheduler\refresh.ps1 `
+  -RepositoryRoot C:\path\to\project-feedback-loop
+```
+
+The wrapper keeps the same command contract and is intended for Windows Task
+Scheduler.
