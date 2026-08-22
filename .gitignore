@@ -2,3 +2,5 @@ __pycache__/
 index-*/
 tags-*
 triplet/*.json
+# Generated KB tags index
+tags-kb
