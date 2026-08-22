@@ -27,20 +27,22 @@ def enrich(items: list[dict], signals: list[dict]) -> list[dict]:
     return enriched
 
 
-def render_text(items: list[dict], signal_count: int, observed_at: str = "unknown") -> str:
-    return f"observations: {signal_count} | observed_at: {observed_at}\n" + "".join(
+def render_text(items: list[dict], signal_count: int, observed_at: str = "unknown", excluded_dirs: list[str] | None = None) -> str:
+    excluded = ", ".join(excluded_dirs or []) or "none"
+    return f"observations: {signal_count} | observed_at: {observed_at} | excluded_dirs: {excluded}\n" + "".join(
         f"{item.get('id')} | {item.get('kind')} | {item.get('state')} | priority={item.get('priority')} | signals={item.get('signal_count', 0)}\n"
         for item in items
     )
 
 
-def render_html(items: list[dict], signal_count: int, observed_at: str = "unknown", markers: list[str] | None = None) -> str:
+def render_html(items: list[dict], signal_count: int, observed_at: str = "unknown", markers: list[str] | None = None, excluded_dirs: list[str] | None = None) -> str:
     rows = "".join(
         "<tr>" + "".join(f"<td>{html.escape(str(item.get(field, '')))}</td>" for field in ("id", "kind", "state", "priority", "source", "source_match", "signal_count")) + "</tr>"
         for item in items
     )
     marker_text = ", ".join(markers or [])
-    return "<!doctype html>\n<meta charset=\"utf-8\"><style>body{font:1rem system-ui,sans-serif;line-height:1.4;margin:2rem;color:#17202a}table{border-collapse:collapse;width:100%;max-width:90rem}caption{text-align:left;font-size:1.4rem;font-weight:700;margin-bottom:.5rem}th,td{border:1px solid #ccd;padding:.5rem;text-align:left}th{background:#eef2f5}tr:nth-child(even){background:#f8fafb}@media(max-width:40rem){body{margin:.75rem}table{font-size:.85rem;display:block;overflow-x:auto;white-space:nowrap}}</style><h1>Feedback context</h1><p>Observations: " + str(signal_count) + " | Observed at: " + html.escape(observed_at) + " | Markers: " + html.escape(marker_text) + "</p><table><caption>Tracked units</caption><thead><tr><th>ID</th><th>Kind</th><th>State</th><th>Priority</th><th>Source</th><th>Match</th><th>Signals</th></tr></thead><tbody>" + rows + "</tbody></table>\n"
+    excluded_text = ", ".join(excluded_dirs or []) or "none"
+    return "<!doctype html>\n<meta charset=\"utf-8\"><style>body{font:1rem system-ui,sans-serif;line-height:1.4;margin:2rem;color:#17202a}table{border-collapse:collapse;width:100%;max-width:90rem}caption{text-align:left;font-size:1.4rem;font-weight:700;margin-bottom:.5rem}th,td{border:1px solid #ccd;padding:.5rem;text-align:left}th{background:#eef2f5}tr:nth-child(even){background:#f8fafb}@media(max-width:40rem){body{margin:.75rem}table{font-size:.85rem;display:block;overflow-x:auto;white-space:nowrap}}</style><h1>Feedback context</h1><p>Observations: " + str(signal_count) + " | Observed at: " + html.escape(observed_at) + " | Markers: " + html.escape(marker_text) + " | Excluded directories: " + html.escape(excluded_text) + "</p><table><caption>Tracked units</caption><thead><tr><th>ID</th><th>Kind</th><th>State</th><th>Priority</th><th>Source</th><th>Match</th><th>Signals</th></tr></thead><tbody>" + rows + "</tbody></table>\n"
 
 
 def main():
@@ -57,11 +59,11 @@ def main():
     excluded_dirs = observations.get("excluded_dirs", [])
     items = enrich(data.get("items", []), signals)
     if args.format == "html":
-        print(render_html(items, len(signals), observed_at, markers), end="")
+        print(render_html(items, len(signals), observed_at, markers, excluded_dirs), end="")
     elif args.format == "json":
         print(json.dumps({"schema_version": data.get("schema_version", 1), "observation_count": len(signals), "observed_at": observed_at, "markers": markers, "excluded_dirs": excluded_dirs, "items": items}, indent=2, sort_keys=True))
     else:
-        print(render_text(items, len(signals), observed_at), end="")
+        print(render_text(items, len(signals), observed_at, excluded_dirs), end="")
 
 if __name__ == "__main__":
     main()

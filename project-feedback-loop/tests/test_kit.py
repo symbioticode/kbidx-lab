@@ -219,6 +219,8 @@ class KitTests(unittest.TestCase):
             signals = observations["signals"]
             self.assertEqual(signals, [])
             self.assertEqual(observations["excluded_dirs"], ["node_modules"])
+            self.assertIn("excluded_dirs: node_modules", (root / "generated/context.txt").read_text())
+            self.assertIn("Excluded directories: node_modules", (root / "generated/context.html").read_text())
 
 if __name__ == "__main__":
     unittest.main()
