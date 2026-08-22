@@ -27,4 +27,6 @@ python3 kit/portfolio.py \
 ```
 
 The generated portfolio keeps the workspace, priority, signals, freshness, and
-source-match status for every item. Generated directories are ignored by Git.
+source-match status for every item. `portfolio-generated/manifest.json` is the
+completion marker and lists the two complete portfolio views. Generated
+directories are ignored by Git.
