@@ -61,6 +61,22 @@ class KitTests(unittest.TestCase):
             self.assertNotEqual(result.returncode, 0)
             self.assertIn("duplicate item id", result.stderr)
 
+    def test_registry_rejects_empty_registry(self):
+        with tempfile.TemporaryDirectory() as directory:
+            source = Path(directory) / "registry.toml"
+            source.write_text("", encoding="utf-8")
+            result = subprocess.run([sys.executable, str(ROOT / "kit/registry.py"), str(source)], capture_output=True, text=True)
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn("one or more", result.stderr)
+
+    def test_registry_rejects_non_string_required_fields(self):
+        with tempfile.TemporaryDirectory() as directory:
+            source = Path(directory) / "registry.toml"
+            source.write_text('[[item]]\nid = 42\nkind = "project"\nstate = "ACTIVE"\npriority = "LOW"\n', encoding="utf-8")
+            result = subprocess.run([sys.executable, str(ROOT / "kit/registry.py"), str(source)], capture_output=True, text=True)
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn("missing required field", result.stderr)
+
     def test_ambiguous_source_is_not_assigned(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
