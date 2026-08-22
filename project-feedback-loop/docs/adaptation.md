@@ -16,7 +16,7 @@ Replace them for another workflow, for example:
 python kit/refresh.py examples/minimal --marker NEEDS-REVIEW --marker BLOCKED
 ```
 
-The scheduler is replaceable. See `schedulers/` for systemd-user, cron,
-Windows Task Scheduler, and GitHub Actions examples. Every adapter should call
-the complete `kit/refresh.py` pipeline rather than only rendering a previously
-generated registry.
+The scheduler is replaceable. The repository provides systemd-user and Windows
+Task Scheduler examples; cron and GitHub Actions can use the same command
+contract. Every adapter should call the complete `kit/refresh.py` pipeline
+rather than only rendering a previously generated registry.

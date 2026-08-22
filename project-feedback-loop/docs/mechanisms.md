@@ -27,7 +27,7 @@ sources → rules and signals → heuristic observation → human confirmation
 ```text
 normalized record
    ├── human HTML view
-   ├── machine JSON/TOML view
+   ├── machine JSON view (TOML may remain a source format)
    └── compact AI context
 ```
 
