@@ -61,6 +61,8 @@ The same tracked-unit model applies to:
 
 See [`docs/scenarios.md`](docs/scenarios.md), [`docs/architecture.md`](docs/architecture.md), and [`examples/`](examples/).
 The declaration contract is documented in [`docs/registry.md`](docs/registry.md).
+Operational commands and interpretation guidance are in
+[`docs/operations.md`](docs/operations.md).
 
 ## Foundations
 
