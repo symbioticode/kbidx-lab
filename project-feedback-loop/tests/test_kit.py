@@ -263,6 +263,12 @@ class KitTests(unittest.TestCase):
             observations = json.loads((root / "generated/observations.json").read_text())
             self.assertEqual(observations["markers"], ["REVISER"])
 
+    def test_empty_marker_is_rejected(self):
+        with tempfile.TemporaryDirectory() as directory:
+            result = subprocess.run([sys.executable, str(ROOT / "kit/observer.py"), directory, "--marker", ""], capture_output=True, text=True)
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn("value must not be empty", result.stderr)
+
     def test_external_output_does_not_exclude_source_corpus(self):
         with tempfile.TemporaryDirectory() as directory, tempfile.TemporaryDirectory() as output_directory:
             root = Path(directory)

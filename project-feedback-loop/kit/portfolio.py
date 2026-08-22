@@ -13,13 +13,19 @@ ROOT = Path(__file__).parent
 PRIORITY_ORDER = {"HIGH": 0, "MEDIUM": 1, "LOW": 2}
 
 
+def non_empty_argument(value: str) -> str:
+    if not value.strip():
+        raise argparse.ArgumentTypeError("value must not be empty")
+    return value
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("directories", nargs="+", type=Path, help="directories containing registry.toml")
     parser.add_argument("--output", type=Path, default=Path("portfolio-generated"))
     parser.add_argument("--workspace-output-root", type=Path, help="root for per-workspace derived outputs")
-    parser.add_argument("--marker", action="append", dest="markers", help="marker to pass to every workspace refresh")
-    parser.add_argument("--exclude-dir", action="append", default=[], help="directory name to skip in every workspace")
+    parser.add_argument("--marker", action="append", dest="markers", type=non_empty_argument, help="marker to pass to every workspace refresh")
+    parser.add_argument("--exclude-dir", action="append", default=[], type=non_empty_argument, help="directory name to skip in every workspace")
     args = parser.parse_args()
     workspace_names = [directory.name for directory in args.directories]
     if len(set(workspace_names)) != len(workspace_names):

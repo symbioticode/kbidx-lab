@@ -7,6 +7,12 @@ from pathlib import Path
 
 DEFAULT_MARKERS = ("TODO", "FIXME", "PENDING", "blocked", "en attente")
 
+
+def non_empty_argument(value: str) -> str:
+    if not value.strip():
+        raise argparse.ArgumentTypeError("value must not be empty")
+    return value
+
 def observe(root: Path, excluded: Path | None = None, markers: tuple[str, ...] = DEFAULT_MARKERS, excluded_dirs: tuple[str, ...] = ()) -> list[dict]:
     hits = []
     for path in sorted(root.rglob("*")):
@@ -28,8 +34,8 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("directory", type=Path)
     parser.add_argument("--output", type=Path)
-    parser.add_argument("--marker", action="append", dest="markers", help="marker to observe; repeat for multiple markers")
-    parser.add_argument("--exclude-dir", action="append", default=[], help="directory name to skip; repeat for multiple names")
+    parser.add_argument("--marker", action="append", dest="markers", type=non_empty_argument, help="marker to observe; repeat for multiple markers")
+    parser.add_argument("--exclude-dir", action="append", default=[], type=non_empty_argument, help="directory name to skip; repeat for multiple names")
     args = parser.parse_args()
     root = args.directory
     output = args.output or root / "observations.json"

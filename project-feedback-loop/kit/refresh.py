@@ -11,12 +11,18 @@ from pathlib import Path
 ROOT = Path(__file__).parent
 
 
+def non_empty_argument(value: str) -> str:
+    if not value.strip():
+        raise argparse.ArgumentTypeError("value must not be empty")
+    return value
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("directory", type=Path, help="directory containing registry.toml")
     parser.add_argument("--output", type=Path, help="generated output directory")
-    parser.add_argument("--marker", action="append", dest="markers", help="marker to observe; repeat for multiple markers")
-    parser.add_argument("--exclude-dir", action="append", default=[], help="directory name to skip; repeat for multiple names")
+    parser.add_argument("--marker", action="append", dest="markers", type=non_empty_argument, help="marker to observe; repeat for multiple markers")
+    parser.add_argument("--exclude-dir", action="append", default=[], type=non_empty_argument, help="directory name to skip; repeat for multiple names")
     args = parser.parse_args()
     source = args.directory / "registry.toml"
     output = args.output or args.directory / "generated"
