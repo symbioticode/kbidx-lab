@@ -30,3 +30,20 @@ jobs:
         run: python kit/refresh.py examples/minimal
       - name: Run portfolio example
         run: python kit/portfolio.py examples/portfolio/team-alpha examples/portfolio/team-beta --output portfolio-generated
+
+  windows-wrapper:
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: project-feedback-loop
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Run PowerShell refresh wrapper
+        shell: pwsh
+        run: .\schedulers\windows-task-scheduler\refresh.ps1 -RepositoryRoot $PWD -Python python
+      - name: Check generated context
+        shell: pwsh
+        run: if (-not (Test-Path .\examples\minimal\generated\context.html)) { throw "context.html was not generated" }
