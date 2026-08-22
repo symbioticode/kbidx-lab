@@ -10,6 +10,8 @@ MARKERS = ("TODO", "FIXME", "PENDING", "blocked", "en attente")
 def observe(root: Path, excluded: Path | None = None) -> list[dict]:
     hits = []
     for path in sorted(root.rglob("*")):
+        if path.is_symlink():
+            continue
         if excluded and (path == excluded or excluded in path.parents):
             continue
         if path.is_file() and path.suffix.lower() in {".md", ".toml", ".txt"}:

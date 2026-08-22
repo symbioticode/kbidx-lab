@@ -76,5 +76,21 @@ class KitTests(unittest.TestCase):
             self.assertEqual([item["signal_count"] for item in items], [0, 0])
             self.assertEqual({item["source_match"] for item in items}, {"ambiguous"})
 
+    def test_observer_does_not_follow_symlinks(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            with tempfile.TemporaryDirectory() as outside_directory:
+                outside = Path(outside_directory) / "outside.md"
+                outside.write_text("TODO: must not be observed\n", encoding="utf-8")
+                link = root / "linked.md"
+                try:
+                    link.symlink_to(outside)
+                except (OSError, NotImplementedError):
+                    self.skipTest("symbolic links are unavailable")
+                result = subprocess.run([sys.executable, str(ROOT / "kit/observer.py"), str(root)], check=True, capture_output=True, text=True)
+                observations = json.loads((root / "observations.json").read_text())
+                self.assertEqual(observations["signals"], [])
+                self.assertEqual(result.stdout.strip(), str(root / "observations.json"))
+
 if __name__ == "__main__":
     unittest.main()
