@@ -106,7 +106,12 @@ class KitTests(unittest.TestCase):
             self.assertEqual(set(data["observed_at"]), {"alpha", "beta"})
             self.assertTrue(all(item["workspace_observed_at"] != "unknown" for item in data["items"]))
             self.assertEqual([(item["workspace"], item["id"]) for item in data["items"]], [("beta", "CT-2"), ("alpha", "P-1")])
-            self.assertIn("Portfolio context", (output / "portfolio.html").read_text())
+            rendered = (output / "portfolio.html").read_text()
+            self.assertIn("Portfolio context", rendered)
+            self.assertIn("Generated at:", rendered)
+            self.assertIn("Workspaces: alpha, beta", rendered)
+            self.assertIn("Markers: alpha: REVIEW; beta: REVIEW", rendered)
+            self.assertIn("Excluded directories: alpha: node_modules; beta: node_modules", rendered)
 
     def test_portfolio_forwards_excluded_directories(self):
         with tempfile.TemporaryDirectory() as directory:
