@@ -117,6 +117,8 @@ class KitTests(unittest.TestCase):
             signals = json.loads((root / "generated/observations.json").read_text())["signals"]
             self.assertEqual(len(signals), 1)
             self.assertIn("REVISER", signals[0]["signal"])
+            observations = json.loads((root / "generated/observations.json").read_text())
+            self.assertEqual(observations["markers"], ["REVISER"])
 
 if __name__ == "__main__":
     unittest.main()
