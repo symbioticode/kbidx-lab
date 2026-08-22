@@ -1,5 +1,7 @@
 # Project Feedback Loop
 
+![Project feedback loop tests](https://github.com/symbioticode/kbidx-lab/actions/workflows/project-feedback-loop.yml/badge.svg)
+
 How to keep a shared, useful context between humans, local files, scripts, and
 optional AI consumers without rebuilding the situation at every session.
 
