@@ -32,6 +32,13 @@ If two items declare the same source filename, the match is marked
 `ambiguous`; if an item has no source, it is marked `none`. Neither case gets an
 item-level signal count by accident.
 
+The renderer matches declarations by basename so that a portable declaration
+such as `STATUS.md` works across checkouts. If observed signals come from more
+than one distinct path with that basename, the result is marked
+`source_match=ambiguous` and no signal is assigned. Deployments needing
+stronger provenance should use unique source names or replace the renderer with
+a path-aware adapter.
+
 ## Common kinds
 
 The reference scenarios use:

@@ -7,9 +7,12 @@ from pathlib import Path
 
 def enrich(items: list[dict], signals: list[dict]) -> list[dict]:
     by_name: dict[str, int] = {}
+    signal_sources_by_name: dict[str, set[str]] = {}
     for signal in signals:
-        name = Path(signal.get("source", "")).name
+        raw_source = str(signal.get("source", ""))
+        name = Path(raw_source).name
         by_name[name] = by_name.get(name, 0) + 1
+        signal_sources_by_name.setdefault(name, set()).add(raw_source)
     declared: dict[str, int] = {}
     for item in items:
         raw_source = item.get("source")
@@ -21,8 +24,9 @@ def enrich(items: list[dict], signals: list[dict]) -> list[dict]:
         copy = dict(item)
         raw_source = item.get("source")
         source = Path(str(raw_source)).name if raw_source else ""
-        copy["signal_count"] = by_name.get(source, 0) if source and declared.get(source) == 1 else 0
-        copy["source_match"] = "unique" if source and declared.get(source) == 1 else ("ambiguous" if source else "none")
+        source_is_ambiguous = len(signal_sources_by_name.get(source, set())) > 1
+        copy["signal_count"] = by_name.get(source, 0) if source and declared.get(source) == 1 and not source_is_ambiguous else 0
+        copy["source_match"] = "unique" if source and declared.get(source) == 1 and not source_is_ambiguous else ("ambiguous" if source else "none")
         enriched.append(copy)
     return enriched
 
