@@ -30,3 +30,15 @@ normalized record
    ├── machine JSON/TOML view
    └── compact AI context
 ```
+
+The reference command is:
+
+```text
+python3 kit/refresh.py examples/minimal
+        ├── generated/context.html   human view
+        ├── generated/context.json    machine view
+        └── generated/context.txt     compact context
+```
+
+Generated files are excluded from observation. They are projections, never
+additional sources of truth.

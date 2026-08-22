@@ -25,8 +25,13 @@ def main() -> None:
     context = output / "context.txt"
     rendered = subprocess.run([sys.executable, str(ROOT / "render_context.py"), str(registry)], check=True, capture_output=True, text=True)
     context.write_text(rendered.stdout, encoding="utf-8")
+    html_context = output / "context.html"
+    html_context.write_text(subprocess.run([sys.executable, str(ROOT / "render_context.py"), str(registry), "--format", "html"], check=True, capture_output=True, text=True).stdout, encoding="utf-8")
+    machine_context = output / "context.json"
+    machine_context.write_text(subprocess.run([sys.executable, str(ROOT / "render_context.py"), str(registry), "--format", "json"], check=True, capture_output=True, text=True).stdout, encoding="utf-8")
     manifest = output / "manifest.json"
-    manifest.write_text(json.dumps({"schema_version": 1, "artifacts": [p.name for p in (registry, observations, context)]}, indent=2) + "\n", encoding="utf-8")
+    artifacts = (registry, observations, context, html_context, machine_context)
+    manifest.write_text(json.dumps({"schema_version": 1, "artifacts": [p.name for p in artifacts]}, indent=2) + "\n", encoding="utf-8")
     print(output)
 
 

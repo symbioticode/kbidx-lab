@@ -19,13 +19,17 @@ class KitTests(unittest.TestCase):
             fixture = ROOT / "examples/minimal/registry.toml"
             (root / "registry.toml").write_text(fixture.read_text(), encoding="utf-8")
             (root / "notes.md").write_text("TODO: review this item\n", encoding="utf-8")
+            (root / "generated").mkdir()
+            (root / "generated" / "old.txt").write_text("PENDING: stale derived output\n", encoding="utf-8")
             subprocess.run([sys.executable, str(ROOT / "kit/refresh.py"), str(root)], check=True)
             generated = root / "generated"
             self.assertEqual(
                 json.loads((generated / "manifest.json").read_text())["artifacts"],
-                ["registry.json", "observations.json", "context.txt"],
+                ["registry.json", "observations.json", "context.txt", "context.html", "context.json"],
             )
             self.assertIn("demo-project", (generated / "context.txt").read_text())
+            self.assertIn("<table>", (generated / "context.html").read_text())
+            self.assertEqual(json.loads((generated / "context.json").read_text())["schema_version"], 1)
             signals = json.loads((generated / "observations.json").read_text())["signals"]
             self.assertEqual(len(signals), 1)
             self.assertEqual(signals[0]["source"], str(root / "notes.md"))

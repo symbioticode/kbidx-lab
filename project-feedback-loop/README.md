@@ -73,10 +73,12 @@ python3 -m unittest discover -s tests -v
 ```
 
 The command validates the declarations, observes source files, and writes all
-derived artifacts under `examples/minimal/generated/` (which is ignored). The
-reference kit is intentionally small and replaceable. Adapt the source paths,
-states, scheduler, and dashboard to your environment. The individual scripts
-remain available when a deployment needs separate stages.
+derived artifacts under `examples/minimal/generated/` (which is ignored): a
+machine-readable registry and context, heuristic observations, a compact text
+context, and a browser-readable HTML table. The reference kit is intentionally
+small and replaceable. Adapt the source paths, states, scheduler, and dashboard
+to your environment. The individual scripts remain available when a deployment
+needs separate stages.
 
 ## Windows contributions welcome
 
