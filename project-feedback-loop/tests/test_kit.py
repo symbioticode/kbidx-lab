@@ -34,6 +34,7 @@ class KitTests(unittest.TestCase):
             )
             self.assertIn("observed_at", json.loads((generated / "observations.json").read_text()))
             self.assertIn("generated_at", json.loads((generated / "manifest.json").read_text()))
+            self.assertFalse((generated / ".manifest.json.tmp").exists())
             self.assertIn("demo-project", (generated / "context.txt").read_text())
             self.assertIn("observations: 2 | observed_at:", (generated / "context.txt").read_text())
             self.assertIn("demo-project | project | ACTIVE | priority=HIGH | signals=1", (generated / "context.txt").read_text())
@@ -126,6 +127,7 @@ class KitTests(unittest.TestCase):
             manifest = json.loads((output / "manifest.json").read_text())
             self.assertEqual(manifest["artifacts"], ["portfolio.json", "portfolio.html"])
             self.assertEqual(manifest["workspaces"], ["alpha", "beta"])
+            self.assertFalse((output / ".manifest.json.tmp").exists())
 
     def test_portfolio_forwards_excluded_directories(self):
         with tempfile.TemporaryDirectory() as directory:

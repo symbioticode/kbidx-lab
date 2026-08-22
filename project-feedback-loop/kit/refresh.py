@@ -28,7 +28,9 @@ def main() -> None:
     output = args.output or args.directory / "generated"
     output.mkdir(parents=True, exist_ok=True)
     manifest = output / "manifest.json"
+    manifest_tmp = output / ".manifest.json.tmp"
     manifest.unlink(missing_ok=True)
+    manifest_tmp.unlink(missing_ok=True)
     registry = output / "registry.json"
     observations = output / "observations.json"
     subprocess.run([sys.executable, str(ROOT / "registry.py"), str(source), "--output", str(registry)], check=True)
@@ -47,7 +49,8 @@ def main() -> None:
     machine_context = output / "context.json"
     machine_context.write_text(subprocess.run(render_args + ["--format", "json"], check=True, capture_output=True, text=True).stdout, encoding="utf-8")
     artifacts = (registry, observations, context, html_context, machine_context)
-    manifest.write_text(json.dumps({"schema_version": 1, "generated_at": datetime.now(timezone.utc).isoformat(), "artifacts": [p.name for p in artifacts]}, indent=2) + "\n", encoding="utf-8")
+    manifest_tmp.write_text(json.dumps({"schema_version": 1, "generated_at": datetime.now(timezone.utc).isoformat(), "artifacts": [p.name for p in artifacts]}, indent=2) + "\n", encoding="utf-8")
+    manifest_tmp.replace(manifest)
     print(output)
 
 
