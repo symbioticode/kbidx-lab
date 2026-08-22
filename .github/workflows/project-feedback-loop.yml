@@ -26,6 +26,8 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Run reference kit tests
         run: python -m unittest discover -s tests -v
+      - name: Compile kit scripts
+        run: python -m compileall -q kit
       - name: Run example refresh
         run: python kit/refresh.py examples/minimal
       - name: Run portfolio example
