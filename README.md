@@ -95,3 +95,18 @@ sera suffisamment comprise et stabilisée.
 Le prochain enjeu n'est donc pas de figer ce module, mais de déterminer comment
 ses vues — tags, relations et statuts — s'assemblent avec les autres modules pour
 décrire le cycle de vie complet de la connaissance.
+
+## Projet feedback loop
+
+Le sous-projet [`project-feedback-loop/`](project-feedback-loop/) généralise ce
+problème au suivi de projets, de Change Tickets et d'articles KB. Il fournit un
+petit kit Python sans agent IA obligatoire : déclaration TOML, observation de
+signaux, provenance et projections texte, JSON et HTML. Il constitue un exemple
+réutilisable de la manière dont les états peuvent circuler entre fichiers,
+connaissance, scripts et contexte de collaboration.
+
+Pour l'exécuter :
+
+```text
+python3 project-feedback-loop/kit/refresh.py project-feedback-loop/examples/minimal
+```
