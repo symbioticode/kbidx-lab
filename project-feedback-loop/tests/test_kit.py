@@ -286,6 +286,21 @@ class KitTests(unittest.TestCase):
                 self.assertEqual(observations["signals"], [])
                 self.assertEqual(result.stdout.strip(), str(root / "observations.json"))
 
+    def test_observer_does_not_follow_symlink_directories(self):
+        with tempfile.TemporaryDirectory() as directory, tempfile.TemporaryDirectory() as outside_directory:
+            root = Path(directory)
+            outside = Path(outside_directory)
+            (outside / "outside.md").write_text("TODO: must not be observed\n", encoding="utf-8")
+            link = root / "linked-directory"
+            try:
+                link.symlink_to(outside, target_is_directory=True)
+            except (OSError, NotImplementedError):
+                self.skipTest("symbolic links are unavailable")
+            result = subprocess.run([sys.executable, str(ROOT / "kit/observer.py"), str(root)], check=True, capture_output=True, text=True)
+            observations = json.loads((root / "observations.json").read_text())
+            self.assertEqual(observations["signals"], [])
+            self.assertEqual(result.stdout.strip(), str(root / "observations.json"))
+
     def test_custom_marker_replaces_defaults(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
