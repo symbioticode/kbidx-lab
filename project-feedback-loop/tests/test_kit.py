@@ -92,11 +92,24 @@ class KitTests(unittest.TestCase):
                 )
                 workspaces.append(str(workspace))
             output = root / "portfolio"
-            subprocess.run([sys.executable, str(ROOT / "kit/portfolio.py"), *workspaces, "--output", str(output)], check=True)
+            subprocess.run([sys.executable, str(ROOT / "kit/portfolio.py"), *workspaces, "--output", str(output), "--marker", "REVIEW"], check=True)
             data = json.loads((output / "portfolio.json").read_text())
             self.assertEqual(data["workspaces"], ["alpha", "beta"])
+            self.assertEqual(data["markers"], ["REVIEW"])
             self.assertEqual([(item["workspace"], item["id"]) for item in data["items"]], [("alpha", "P-1"), ("beta", "CT-2")])
             self.assertIn("Portfolio context", (output / "portfolio.html").read_text())
+
+    def test_portfolio_rejects_duplicate_workspace_names(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            first = root / "one" / "same"
+            second = root / "two" / "same"
+            for workspace in (first, second):
+                workspace.mkdir(parents=True)
+                (workspace / "registry.toml").write_text('[[item]]\nid = "x"\nkind = "project"\nstate = "ACTIVE"\npriority = "LOW"\n', encoding="utf-8")
+            result = subprocess.run([sys.executable, str(ROOT / "kit/portfolio.py"), str(first), str(second)], capture_output=True, text=True)
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn("workspace directory names must be unique", result.stderr)
 
     def test_ambiguous_source_is_not_assigned(self):
         with tempfile.TemporaryDirectory() as directory:

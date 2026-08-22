@@ -20,3 +20,7 @@ The scheduler is replaceable. The repository provides systemd-user and Windows
 Task Scheduler examples; cron and GitHub Actions can use the same command
 contract. Every adapter should call the complete `kit/refresh.py` pipeline
 rather than only rendering a previously generated registry.
+
+`portfolio.py` forwards repeated `--marker` options to every workspace and
+requires unique directory names so that the aggregated `workspace` field stays
+unambiguous.

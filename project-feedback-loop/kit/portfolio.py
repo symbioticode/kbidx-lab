@@ -15,10 +15,17 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("directories", nargs="+", type=Path, help="directories containing registry.toml")
     parser.add_argument("--output", type=Path, default=Path("portfolio-generated"))
+    parser.add_argument("--marker", action="append", dest="markers", help="marker to pass to every workspace refresh")
     args = parser.parse_args()
+    workspace_names = [directory.name for directory in args.directories]
+    if len(set(workspace_names)) != len(workspace_names):
+        parser.error("workspace directory names must be unique")
     items = []
     for directory in args.directories:
-        subprocess.run([sys.executable, str(ROOT / "refresh.py"), str(directory)], check=True)
+        refresh_args = [sys.executable, str(ROOT / "refresh.py"), str(directory)]
+        for marker in args.markers or []:
+            refresh_args.extend(["--marker", marker])
+        subprocess.run(refresh_args, check=True)
         context = directory / "generated/context.json"
         data = json.loads(context.read_text(encoding="utf-8"))
         for item in data.get("items", []):
@@ -26,7 +33,7 @@ def main() -> None:
             copy["workspace"] = directory.name
             items.append(copy)
     args.output.mkdir(parents=True, exist_ok=True)
-    payload = {"schema_version": 1, "workspaces": [directory.name for directory in args.directories], "items": items}
+    payload = {"schema_version": 1, "workspaces": workspace_names, "markers": args.markers, "items": items}
     (args.output / "portfolio.json").write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     rows = "".join(
         "<tr>" + "".join(f"<td>{html.escape(str(item.get(field, '')))}</td>" for field in ("workspace", "id", "kind", "state", "priority", "signal_count")) + "</tr>"

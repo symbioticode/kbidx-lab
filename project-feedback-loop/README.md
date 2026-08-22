@@ -86,7 +86,7 @@ For several projects, aggregate their refreshed contexts into one portfolio:
 
 ```bash
 python3 kit/portfolio.py examples/project-a examples/project-b \
-  --output portfolio-generated
+  --output portfolio-generated --marker NEEDS-REVIEW
 ```
 
 The portfolio keeps each item's `workspace` origin and produces both JSON and
