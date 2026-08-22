@@ -4,4 +4,5 @@ Description=Refresh the local project feedback context
 [Service]
 Type=oneshot
 WorkingDirectory=%h/project-feedback-loop
-ExecStart=/usr/bin/python3 kit/refresh.py examples/minimal
+ExecStart=/usr/bin/env python3 kit/refresh.py examples/minimal
+ExecStartPost=/usr/bin/env test -f %h/project-feedback-loop/examples/minimal/generated/manifest.json
