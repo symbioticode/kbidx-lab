@@ -15,6 +15,8 @@ The reference observer records `observed_at` in UTC, and `refresh.py` records
 `generated_at` in its manifest. These timestamps describe when the procedure
 ran; they do not certify that the source declaration was correct.
 The observation artifact also records the exact marker list used for the run.
+The same timestamp and marker configuration are copied into the rendered
+context so that an exported context remains interpretable on its own.
 
 When an observed signal's filename matches an item's declared `source`, the
 rendered projections expose that relationship as `signal_count`. Unmatched

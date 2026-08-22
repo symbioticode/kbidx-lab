@@ -24,19 +24,20 @@ def enrich(items: list[dict], signals: list[dict]) -> list[dict]:
     return enriched
 
 
-def render_text(items: list[dict], signal_count: int) -> str:
-    return f"observations: {signal_count}\n" + "".join(
+def render_text(items: list[dict], signal_count: int, observed_at: str = "unknown") -> str:
+    return f"observations: {signal_count} | observed_at: {observed_at}\n" + "".join(
         f"{item.get('id')} | {item.get('kind')} | {item.get('state')} | priority={item.get('priority')} | signals={item.get('signal_count', 0)}\n"
         for item in items
     )
 
 
-def render_html(items: list[dict], signal_count: int) -> str:
+def render_html(items: list[dict], signal_count: int, observed_at: str = "unknown", markers: list[str] | None = None) -> str:
     rows = "".join(
         "<tr>" + "".join(f"<td>{html.escape(str(item.get(field, '')))}</td>" for field in ("id", "kind", "state", "priority", "signal_count")) + "</tr>"
         for item in items
     )
-    return "<!doctype html>\n<h1>Feedback context</h1><p>Observations: " + str(signal_count) + "</p><table><thead><tr><th>ID</th><th>Kind</th><th>State</th><th>Priority</th><th>Signals</th></tr></thead><tbody>" + rows + "</tbody></table>\n"
+    marker_text = ", ".join(markers or [])
+    return "<!doctype html>\n<h1>Feedback context</h1><p>Observations: " + str(signal_count) + " | Observed at: " + html.escape(observed_at) + " | Markers: " + html.escape(marker_text) + "</p><table><thead><tr><th>ID</th><th>Kind</th><th>State</th><th>Priority</th><th>Signals</th></tr></thead><tbody>" + rows + "</tbody></table>\n"
 
 
 def main():
@@ -48,13 +49,15 @@ def main():
     data = json.loads(args.registry.read_text(encoding="utf-8"))
     observations = json.loads(args.observations.read_text(encoding="utf-8")) if args.observations else {"signals": []}
     signals = observations.get("signals", [])
+    observed_at = str(observations.get("observed_at", "unknown"))
+    markers = observations.get("markers", [])
     items = enrich(data.get("items", []), signals)
     if args.format == "html":
-        print(render_html(items, len(signals)), end="")
+        print(render_html(items, len(signals), observed_at, markers), end="")
     elif args.format == "json":
-        print(json.dumps({"schema_version": data.get("schema_version", 1), "observation_count": len(signals), "items": items}, indent=2, sort_keys=True))
+        print(json.dumps({"schema_version": data.get("schema_version", 1), "observation_count": len(signals), "observed_at": observed_at, "markers": markers, "items": items}, indent=2, sort_keys=True))
     else:
-        print(render_text(items, len(signals)), end="")
+        print(render_text(items, len(signals), observed_at), end="")
 
 if __name__ == "__main__":
     main()
